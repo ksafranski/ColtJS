@@ -23,7 +23,7 @@ define(function(){
          * @param {object} scope
          * @return {object} 
          */
-        renderModuleOne: function(colt, scope, url_data){
+        renderModuleOne: function(Colt, scope, url_data){
             
             // Show any url data (query string)
             console.log(url_data);
@@ -46,7 +46,7 @@ define(function(){
             };
             
             // Render template
-            colt.render(scope,data);
+            Colt.render(scope,data);
             
             // Get something from one of the utilities
             console.log(scope.messages.message_one);
@@ -57,8 +57,8 @@ define(function(){
          * @param  {object} event 
          * @return {bool}
          */
-        goNext: function(event, colt, scope) {
-            colt.navigate('modtwo');
+        goNext: function(event, Colt, scope) {
+            Colt.navigate('modtwo');
         },
     
         /**
@@ -66,11 +66,11 @@ define(function(){
          * @param  {object} event
          * @return {bool}
          */
-        goThree: function(event, colt, scope) {
-            colt.navigate('modthree');
+        goThree: function(event, Colt, scope) {
+            Colt.navigate('modthree');
         },
         
-        testEvent: function(event, colt, scope){
+        testEvent: function(event, Colt, scope){
             alert('TEST EVENT FIRED');
         }
         

@@ -26,7 +26,7 @@ define(function () {
      * @type {Object}
      */
 
-    var colt = {
+    var Colt = {
 
         // Will auto-populate all routes
         routes: {},
@@ -78,6 +78,7 @@ define(function () {
                     _this.routes[route] = [module, _this.scope[module].routes[route]];
                 }
             }
+            
             // Initial route
             _this.loadUrl(cur_route);
 
@@ -146,26 +147,10 @@ define(function () {
 
             var _this = this,
                 scope = _this.scope[module];
-
-            // Check to see if we are using inline template or if template has already been loaded/defined
-            if (!scope.hasOwnProperty('template')) {
-
-                _this.AJAX('templates/' + scope.mid + '.tpl', function (data) {
-                    if (data) {
-                        scope.template = data;
-                        loadDependencies(_this, scope, route_fn);
-                    } else {
-                        console.error('Error Loading ' + scope.mid + '.tpl');
-                    }
-                });
-
-            } else {
-                loadDependencies(_this, scope, route_fn);
-            }
-
+            
             /**
              * Checks for & loads any dependencies before calling the route's function
-             * @param  _this          The colt object
+             * @param  _this          The Colt object
              * @param  scope          The module object to be used.
              * @param  route_fn       The return function from the route.
              */
@@ -196,6 +181,23 @@ define(function () {
                     // Fire route's function
                     scope[route_fn](_this, scope, url_data);
                 }
+            }
+            
+            
+            // Check to see if we are using inline template or if template has already been loaded/defined
+            if (!scope.hasOwnProperty('template')) {
+
+                _this.AJAX('templates/' + scope.mid + '.tpl', function (data) {
+                    if (data) {
+                        scope.template = data;
+                        loadDependencies(_this, scope, route_fn);
+                    } else {
+                        console.error('Error Loading ' + scope.mid + '.tpl');
+                    }
+                });
+
+            } else {
+                loadDependencies(_this, scope, route_fn);
             }
         },
 
@@ -266,7 +268,7 @@ define(function () {
                         selector = match[2];
                         /*
                          * bind method on event for selector on scope.mid
-                         * the caller function has access to event, colt, scope
+                         * the caller function has access to event, Colt, scope
                          */
                         nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
 
@@ -348,6 +350,6 @@ define(function () {
 
 
     // Return the framework
-    return colt;
+    return Colt;
 
 });

@@ -13,9 +13,9 @@ define(function(){
          * @param {object} scope
          * @return {object} 
          */
-        renderStatic: function(app, scope){            
+        renderStatic: function(Colt, scope, url_data){            
             // Render template
-            app.render(scope);
+            Colt.render(scope);
         }
         
     };

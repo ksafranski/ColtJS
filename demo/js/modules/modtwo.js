@@ -17,9 +17,9 @@ define(function(){
          * @param {object} scope
          * @return {object}  
          */
-        renderModuleTwo: function(colt, scope){
+        renderModuleTwo: function(Colt, scope){
             /** calling render for this module */
-            colt.render(scope);
+            Colt.render(scope);
         },
         
         /**
@@ -27,8 +27,8 @@ define(function(){
          * @param  {object} event 
          * @return {bool}       
          */
-        goBack: function (event, colt, scope) {
-            colt.navigate('modone');
+        goBack: function (event, Colt, scope) {
+            Colt.navigate('modone');
         },
 
         /**
@@ -36,8 +36,8 @@ define(function(){
          * @param  {object} event 
          * @return {bool}       
          */
-        goNext: function (event, colt, scope) {
-            colt.navigate('modthree');
+        goNext: function (event, Colt, scope) {
+            Colt.navigate('modthree');
         }
            
     };

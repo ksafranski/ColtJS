@@ -6,10 +6,10 @@ require.config({
     }
 });
 
-define(['colt'], function (colt) {
+define(['colt'], function (Colt) {
     
     // Define all of the modules
-    colt.modules = [
+    Colt.modules = [
         'modules/static',
         'modules/modone',
         'modules/modtwo',
@@ -17,6 +17,6 @@ define(['colt'], function (colt) {
     ];
     
     // Initialize application 
-    colt.init(); 
+    Colt.init(); 
 
 });
