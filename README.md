@@ -42,7 +42,7 @@ define(function(){
         },
     
         // Handles rendering of the module
-        renderModuleName: function(colt, scope, url_data){
+        renderModuleName: function(Colt, scope, url_data){
             
             // Setup data for template
             var data = {
@@ -51,11 +51,11 @@ define(function(){
             };
             
             // Render template
-            colt.render(scope,data);
+            Colt.render(scope,data);
         },
         
         // Example of a method of the module object
-        doSomething: function(event, colt, scope){
+        doSomething: function(event, Colt, scope){
             // Console logs the current module scope
             console.log(scope);
         }
@@ -76,8 +76,8 @@ Loading up the framework using RequireJS can be done by simply including the Req
 <script src="js/libs/require.js" data-main="js/main">
 ```
 
-Then setting up `main.js` similar to the following, specifying the path to `colt` and any other libraries utilized, then defining 
-the modules as an array and finally calling `colt.init()`:
+Then setting up `main.js` similar to the following, specifying the path to `Colt` and any other libraries utilized, then defining 
+the modules as an array and finally calling `Colt.init()`:
 
 ```
 require.config({
@@ -88,16 +88,16 @@ require.config({
     }
 });
 
-define(['colt'], function (colt) {
+define(['colt'], function (Colt) {
     
     // Define all of the modules
-    colt.modules = [
+    Colt.modules = [
         'modules/module_name',
         ...additional modules...
     ];
     
     // Initialize application 
-    colt.init(); 
+    Colt.init(); 
 
 });
 ```
@@ -147,7 +147,7 @@ Will load to `http://www.website.com/#!/route_to_module`
 Likewise, using the `navigate` function:
 
 ```
-colt.navigate('route_to_module');
+Colt.navigate('route_to_module');
 ```
 
 Will point the route to the URL above.
@@ -171,7 +171,7 @@ Will pass the following object back to the routes function:
 So, if the route calls `renderModule` you can access this data using the following:
 
 ```
-renderModule: function(colt, scope, url_data){
+renderModule: function(Colt, scope, url_data){
     // url_data contains the query string as an object...
 }
 ```
@@ -200,16 +200,16 @@ require.config({
     }
 });
 
-define(['colt','mustache'], function (colt,Mustache) {
+define(['colt','mustache'], function (Colt,Mustache) {
     
     // Define all of the modules
-    colt.modules = [
+    Colt.modules = [
         'modules/module_name',
         ...additional modules...
     ];
     
     // Define custom render to use Mustache
-    colt.render = function (scope, data) {
+    Colt.render = function (scope, data) {
         var template = scope.template,
             rendered = Mustache.render(template,data);
         
@@ -221,9 +221,7 @@ define(['colt','mustache'], function (colt,Mustache) {
     };
     
     // Initialize application 
-    colt.init(); 
+    Colt.init(); 
 
 });
 ```
-
-
