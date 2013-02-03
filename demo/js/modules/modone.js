@@ -19,11 +19,8 @@ define(function(){
     
         /**
          * Loads up this modules main view
-         * @param {object} app
-         * @param {object} scope
-         * @return {object} 
          */
-        renderModuleOne: function(Colt, scope, url_data){
+        renderModuleOne: function(url_data){
             
             // Show any url data (query string)
             console.log(url_data);
@@ -46,31 +43,27 @@ define(function(){
             };
             
             // Render template
-            Colt.render(scope,data);
+            Colt.render(this,data);
             
             // Get something from one of the utilities
-            console.log(scope.messages.message_one);
+            console.log(this.messages.message_one);
         },
     
         /**
          * Takes end-user to next module
-         * @param  {object} event 
-         * @return {bool}
          */
-        goNext: function(event, Colt, scope) {
+        goNext: function() {
             Colt.navigate('modtwo');
         },
     
         /**
          * Go to modthree
-         * @param  {object} event
-         * @return {bool}
          */
-        goThree: function(event, Colt, scope) {
+        goThree: function() {
             Colt.navigate('modthree');
         },
         
-        testEvent: function(event, Colt, scope){
+        testEvent: function(){
             alert('TEST EVENT FIRED');
         }
         

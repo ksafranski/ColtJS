@@ -43,7 +43,7 @@ define(function(){
         },
     
         // Handles rendering of the module
-        renderModuleName: function(Colt, scope, url_data){
+        renderModuleName: function(){
             
             // Setup data for template
             var data = {
@@ -52,13 +52,13 @@ define(function(){
             };
             
             // Render template
-            Colt.render(scope,data);
+            Colt.render(this,data);
         },
         
         // Example of a method of the module object
-        doSomething: function(event, Colt, scope){
+        doSomething: function(){
             // Console logs the current module scope
-            console.log(scope);
+            console.log(this);
         }
         
     };
@@ -129,7 +129,8 @@ define(function(){
 });
 ```
 
-The above will attach the `messages` object to the scope of the module for access.
+The above will attach the `messages` object to the scope of the module for access. In the above instance the reference would be `this.messages` inside any methods of 
+the module.
 
 ---
 
@@ -172,10 +173,25 @@ Will pass the following object back to the routes function:
 So, if the route calls `renderModule` you can access this data using the following:
 
 ```
-renderModule: function(Colt, scope, url_data){
+renderModule: function(url_data){
     // url_data contains the query string as an object...
 }
 ```
+
+---
+
+## Events
+
+Events listeners are created using a simple structur similar to other frameworks:
+
+```
+events: {
+    '{event} {object}': '{fn}'
+}
+```
+
+So, for a click event you could specify `'click .something': 'doSomething'` which would fire the `doSomething` method and would return 
+the event.
 
 ---
 
@@ -210,7 +226,7 @@ define(['colt','mustache'], function (Colt,Mustache) {
     ];
     
     // Define custom render to use Mustache
-    Colt.render = function (scope, data) {
+    Colt.render = function (scope,data) {
         var template = scope.template,
             rendered = Mustache.render(template,data);
         

@@ -13,30 +13,23 @@ define(function(){
         
         /**
          * Loads up this module's main view
-         * @param  {object} app   
-         * @param  {object} scope
-         * @return {object}
          */
-        renderModuleThree: function(Colt, scope){
+        renderModuleThree: function(){
             /** calling render for this module */
-            Colt.render(scope);
+            Colt.render(this);
         },
         
         /**
          * Return to modtwo
-         * @param  {object} event
-         * @return {bool}
          */
-        goBack: function (event, Colt, scope) {
+        goBack: function () {
             Colt.navigate('modtwo');
         },
 
         /**
          * Return to modone
-         * @param  {object} event 
-         * @return {bool}
          */
-        goOne: function (event, Colt, scope) {
+        goOne: function () {
             Colt.navigate('modone');
         }
     };
