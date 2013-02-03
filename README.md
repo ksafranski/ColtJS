@@ -255,13 +255,13 @@ Colt includes support for persistent storage using `localStorage`, with a fallba
 Colt.store('some_key','some_value');
 ```
 
-**Retrieve Storage Instance**
+**Retrieve Storage Instance:**
 
 ```
 Colt.store('some_key');
 ```
 
-**Remove Storage Instance**
+**Remove Storage Instance:**
 
 ```
 Colt.store('some_key',null);
