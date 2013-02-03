@@ -249,19 +249,19 @@ define(['colt','mustache'], function (Colt,Mustache) {
 
 Colt includes support for persistent storage using `localStorage`, with a fallback to cookies for older browsers. The commands to utilize this are as follows: 
 
-*Create Storage Instance:*
+**Create Storage Instance:**
 
 ```
 Colt.store('some_key','some_value');
 ```
 
-*Retrieve Storage Instance*
+**Retrieve Storage Instance**
 
 ```
 Colt.store('some_key');
 ```
 
-*Remove Storage Instance*
+**Remove Storage Instance**
 
 ```
 Colt.store('some_key',null);
