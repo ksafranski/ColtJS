@@ -64,7 +64,7 @@ define(function(){
         },
         
         testEvent: function(){
-            alert('TEST EVENT FIRED');
+            alert('Event Triggered!');
         }
         
     };

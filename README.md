@@ -247,7 +247,7 @@ define(['colt','mustache'], function (Colt,Mustache) {
 
 ## Persistent Storage
 
-Colt includes support for persistent storage using `localStorage`, with a fallback to cookies for older browsers. The commands to utilize this are as follows: 
+Colt includes support for persistent storage using `localStorage`, with a fallback to cookies for older browsers. The methods to utilize this are as follows: 
 
 **Create Storage Instance:**
 
@@ -265,4 +265,30 @@ Colt.store('some_key');
 
 ```
 Colt.store('some_key',null);
+```
+
+---
+
+## Pub/Sub
+
+Colt includes publish + subscribe functions to allow decoupling of events and facilitate interation between modules. The methods for pub/sub implementation are as follows:
+
+**Subscribe:**
+
+```
+var token = Colt.subscribe('topic', function(args){
+    ...function actions...
+});
+```
+
+**Publish:**
+
+```
+Colt.publish('topic',args);
+```
+
+**Unsubscribe:**
+
+```
+Colt.unsubscribe(token);
 ```

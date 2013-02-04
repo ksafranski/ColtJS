@@ -37,10 +37,11 @@ define(function () {
         /**
          * Adds module to object and then initiates routes
          */
+
         init: function () {
 
             var module;
-                
+
             // Make available in global scope
             window.Colt = Colt;
 
@@ -69,6 +70,7 @@ define(function () {
         /**
          * Setup Routing Table, Bind and Load Routes
          */
+
         router: function () {
 
             var cur_route = window.location.hash,
@@ -79,7 +81,7 @@ define(function () {
                     Colt.routes[route] = [module, Colt.scope[module].routes[route]];
                 }
             }
-            
+
             // Initial route
             Colt.loadUrl(cur_route);
 
@@ -94,10 +96,11 @@ define(function () {
          * Checks to see that a current route matches a modules's route and hides all of those that don't need to be rendered
          * @param  {string} fragment the current hash
          */
+
         loadUrl: function (fragment) {
             var el_lock,
-                module_name,
-                url_data = {};
+            module_name,
+            url_data = {};
 
             // Break apart fragment
             fragment = fragment.replace('#!/', '');
@@ -143,10 +146,11 @@ define(function () {
          * @param  module         The module object to be used.
          * @param  route_fn       The return function from the route.
          */
+
         processor: function (module, route_fn, url_data) {
 
             var scope = Colt.scope[module];
-            
+
             /**
              * Checks for & loads any dependencies before calling the route's function
              * @param  Colt          The Colt object
@@ -181,8 +185,8 @@ define(function () {
                     scope[route_fn](url_data);
                 }
             }
-            
-            
+
+
             // Check to see if we are using inline template or if template has already been loaded/defined
             if (!scope.hasOwnProperty('template')) {
 
@@ -205,6 +209,7 @@ define(function () {
          * @param  scope    the module object to be used.
          * @param  data     any data to be rendered onto the template.
          */
+
         render: function (scope, data) {
             var template = scope.template,
                 // Replace any mustache-style {{VAR}}'s
@@ -224,6 +229,7 @@ define(function () {
          * @param  {string} fragment the location to be loaded
          * @return {bool} 
          */
+
         navigate: function (fragment) {
 
             var location = window.location,
@@ -242,13 +248,14 @@ define(function () {
          * @param  {Object} events has of events to be watched for
          * @param  {Object} scope the current module
          */
+
         delegateEvents: function (events, scope) {
 
             var method,
-                match,
-                event_name,
-                selector,
-                nodes;
+            match,
+            event_name,
+            selector,
+            nodes;
 
             // Prevent multiple binding of events
             if (!scope.hasOwnProperty('events_bound')) {
@@ -271,7 +278,7 @@ define(function () {
                         nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
 
                         (function (nodes, method) {
-                            for (var i = 0, max = nodes.length; i < max; i++) {                               
+                            for (var i = 0, max = nodes.length; i < max; i++) {
                                 if (nodes[i].addEventListener) { // DOM Level 2 browsers
                                     nodes[i].addEventListener(event_name, function (event) {
                                         (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
@@ -342,82 +349,147 @@ define(function () {
                 alert("Please use a browser with AJAX support!");
             }
         },
-        
+
         /**
          * LocalStorage with polyfill support via cookies
          * @param  key       The key or identifier for the store
          * @param  value     Contents of the store
          */
-         
-        store: function(key,value){
-            
+
+        store: function (key, value) {
+
             var lsSupport = false;
-            
+
             // Check for native support
-            if(localStorage){
+            if (localStorage) {
                 lsSupport = true;
             }
-            
+
             // If value is detected, set new or modify store
-            if(typeof value !== "undefined" && value!==null){
-                if(lsSupport){ // Native support
+            if (typeof value !== "undefined" && value !== null) {
+                if (lsSupport) { // Native support
                     localStorage.setItem(key, value);
-                }else{ // Use Cookie
+                } else { // Use Cookie
                     createCookie(key, value, 30);
                 }
             }
-            
+
             // No value supplied, return value
-            if(typeof value === "undefined"){
-                if(lsSupport){ // Native support
+            if (typeof value === "undefined") {
+                if (lsSupport) { // Native support
                     return localStorage.getItem(key);
-                }else{ // Use cookie 
+                } else { // Use cookie 
                     return readCookie(key);
                 }
             }
-            
+
             // Null specified, remove store
-            if(value===null){
-                if(lsSupport){ // Native support
-                    localStorage.removeItem(key);  
-                }else{ // Use cookie
+            if (value === null) {
+                if (lsSupport) { // Native support
+                    localStorage.removeItem(key);
+                } else { // Use cookie
                     createCookie(key, '', -1);
                 }
             }
-            
+
             // Polyfill functions using cookies
-            
+
             /**
              * Creates new cookie or removes cookie with negative expiration
              * @param  key       The key or identifier for the store
              * @param  value     Contents of the store
              * @param  exp       Expiration - creation defaults to 30 days
              */
-    
-            function createCookie(key,value,exp) {
+
+            function createCookie(key, value, exp) {
                 var date = new Date();
-                date.setTime(date.getTime()+(exp*24*60*60*1000));
-                var expires = "; expires="+date.toGMTString();
-                document.cookie = key+"="+value+expires+"; path=/";
+                date.setTime(date.getTime() + (exp * 24 * 60 * 60 * 1000));
+                var expires = "; expires=" + date.toGMTString();
+                document.cookie = key + "=" + value + expires + "; path=/";
             }
-            
+
             /**
              * Returns contents of cookie
              * @param  key       The key or identifier for the store
              */
-            
+
             function readCookie(key) {
                 var nameEQ = key + "=";
                 var ca = document.cookie.split(';');
-                for(var i=0, max=ca.length;i < max;i++) {
+                for (var i = 0, max = ca.length; i < max; i++) {
                     var c = ca[i];
-                    while (c.charAt(0) === ' ') c = c.substring(1,c.length);
-                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
                 }
                 return null;
-            }    
-            
+            }
+
         },
+
+        // Placeholder object for pub/sub
+        topics: {},
+
+        // ID for incrementing    
+        topic_id: 0,
+
+        /**
+         * Publish to a topic
+         * @param  topic     Topic of the subscription
+         * @param  args      Array of arguments passed
+         */
+
+        publish: function (topic, args) {
+            if (!Colt.topics[topic]) {
+                return false;
+            }
+            setTimeout(function () {
+                var subscribers = Colt.topics[topic],
+                    len = subscribers ? subscribers.length : 0;
+
+                while (len--) {
+                    subscribers[len].fn(args);
+                }
+            }, 0);
+            return true;
+        },
+
+        /**
+         * Subscribes to a topic
+         * @param  topic     Topic of the subscription
+         * @param  args      Function to be called
+         */
+
+        subscribe: function (topic, fn) {
+            var id = (++Colt.topic_id).toString();
+            if (!Colt.topics[topic]) {
+                Colt.topics[topic] = [];
+            }
+            Colt.topics[topic].push({
+                id: id,
+                fn: fn
+            });
+            return id;
+        },
+
+        /**
+         * Unsubscribes from a topic
+         * @param  tokent    Token of the subscription
+         */
+
+        unsubscribe: function (token) {
+            for (var m in Colt.topics) {
+                if (Colt.topics[m]) {
+                    for (var i = 0, j = Colt.topics[m].length; i < j; i++) {
+                        if (Colt.topics[m][i].token === token) {
+                            Colt.topics[m].splice(i, 1);
+                            return token;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
 
     };
 
