@@ -5,6 +5,10 @@
 ColtJS is a simple framework allowing for easy deployment of JavaScript Application using asynchronous module definition. It's only dependency is [RequireJS](http://www.requirejs.org) 
 and it builds off simple principles of a centralized router loading modules only when requested to produce an efficient, easy-to-manage application structure.
 
+The framework includes methods for handling [routing](https://github.com/Fluidbyte/ColtJS#uris-hashes-and-query-string-data), [templates](https://github.com/Fluidbyte/ColtJS#templates), 
+[url parsing](https://github.com/Fluidbyte/ColtJS#uris-hashes-and-query-string-data), [event binding](https://github.com/Fluidbyte/ColtJS#events), [utilities](https://github.com/Fluidbyte/ColtJS#dependencies--utils) 
+[persistent storage](https://github.com/Fluidbyte/ColtJS#persistent-storage) and [pub/sub](https://github.com/Fluidbyte/ColtJS#pubsub) as well as other built in functions.
+
 The current version supports all modern browsers (including IE8 and above) but can easily be adapted to work with older browsers if needed. _Note: 
 we are working on an IE7 support shim which we hope to release shortly._
 
