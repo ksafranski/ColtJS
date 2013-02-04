@@ -6,8 +6,14 @@
     <title>Coltjs by Fluidbyte</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <link href="stylesheets/twilight.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="javascripts/respond.js"></script>
+    <script src="javascripts/rainbow.min.js"></script>
+    <script src="javascripts/generic.js"></script>
+    <script src="javascripts/html.js"></script>
+    <script src="javascripts/css.js"></script>
+    <script src="javascripts/javascript.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -35,7 +41,7 @@
           <p>Simple, efficient, modular JavaScript framework</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/Fluidbyte">Fluidbyte</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+          <!--<span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>-->
         </div>
 
         <h1>ColtJS Module Framework</h1>
@@ -43,9 +49,9 @@
 <hr><p>ColtJS is a simple framework allowing for easy deployment of JavaScript Application using asynchronous module definition. It's only dependency is <a href="http://www.requirejs.org">RequireJS</a> 
 and it builds off simple principles of a centralized router loading modules only when requested to produce an efficient, easy-to-manage application structure.</p>
 
-<p>The framework includes methods for handling <a href="https://github.com/Fluidbyte/ColtJS#uris-hashes-and-query-string-data">routing &amp; navigation</a>, <a href="https://github.com/Fluidbyte/ColtJS#templates">templates</a>, 
-<a href="https://github.com/Fluidbyte/ColtJS#passing-data">url parsing</a>, <a href="https://github.com/Fluidbyte/ColtJS#events">event binding</a>, <a href="https://github.com/Fluidbyte/ColtJS#dependencies--utils">utilities &amp; dependencies</a>, 
-<a href="https://github.com/Fluidbyte/ColtJS#persistent-storage">persistent storage</a> and <a href="https://github.com/Fluidbyte/ColtJS#pubsub">pub/sub</a> as well as other built in functions.</p>
+<p>The framework includes methods for handling <a href="#routing">routing &amp; navigation</a>, <a href="#templates">templates</a>, 
+<a href="#passing-data">url parsing</a>, <a href="#events">event binding</a>, <a href="#utils-dependencies">utilities &amp; dependencies</a>, 
+<a href="#persistent-storage">persistent storage</a> and <a href="#pub-sub">pub/sub</a> as well as other built in functions.</p>
 
 <p>The current version supports all modern browsers (including IE8 and above) but can easily be adapted to work with older browsers if needed. <em>Note: 
 we are working on an IE7 support shim which we hope to release shortly.</em></p>
@@ -60,7 +66,7 @@ name. You can also specify the template by specifying the <code>template</code> 
 
 <p>An example of the structure for a simple module is below:</p>
 
-<pre><code>// Wrap the module in define() + anon function for RequireJS
+<pre><code data-language="javascript">// Wrap the module in define() + anon function for RequireJS
 define(function(){    
 
     var module_name = {
@@ -112,13 +118,13 @@ define(function(){
 
 <p>Loading up the framework using RequireJS can be done by simply including the RequireJS source in the <code>index.html</code> file:</p>
 
-<pre><code>&lt;script src="js/libs/require.js" data-main="js/main"&gt;
+<pre><code data-language="html">&lt;script src="js/libs/require.js" data-main="js/main"&gt;
 </code></pre>
 
 <p>Then setting up <code>main.js</code> similar to the following, specifying the path to <code>Colt</code> and any other libraries utilized, then defining 
 the modules as an array and finally calling <code>Colt.init()</code>:</p>
 
-<pre><code>require.config({
+<pre><code data-language="javascript">require.config({
     baseUrl: "js/",
     paths: {
         colt:       'libs/colt'
@@ -139,14 +145,15 @@ define(['colt'], function (Colt) {
 
 });
 </code></pre>
-
-<hr><h2>Dependencies / Utils</h2>
+<a name="utils-dependencies"></a>
+<hr>
+<h2>Dependencies / Utils</h2>
 
 <p>Dependencies or utilities passed into the modules are coded similar to the modules themselves. When the modules route is matched and its template is
 loaded and rendered any dependencies are as well. If, for example, you wanted to create a simple object with messages to be utilized for output you could do the 
 following:</p>
 
-<pre><code>define(function(){
+<pre><code data-language="javascript">define(function(){
 
     // Define the util as an object
     var messages = {
@@ -165,12 +172,13 @@ following:</p>
 
 <p>The above will attach the <code>messages</code> object to the scope of the module for access. In the above instance the reference would be <code>this.messages</code> inside any methods of 
 the module.</p>
-
-<hr><h2>URI's, Hashes And Query String Data</h2>
+<a name="routing"></a>
+<hr>
+<h2>URI's, Hashes And Query String Data</h2>
 
 <p>The framework adheres to Google's recommended <code>#!</code> convention. Using Colt's <code>navigate</code> method or specifying routes only the name needs to be specified, for example:</p>
 
-<pre><code>routes: {
+<pre><code data-language="javascript">routes: {
     'route_to_module': 'renderModule'
 }
 </code></pre>
@@ -179,37 +187,40 @@ the module.</p>
 
 <p>Likewise, using the <code>navigate</code> function:</p>
 
-<pre><code>Colt.navigate('route_to_module');
+<pre><code data-language="javascript">Colt.navigate('route_to_module');
 </code></pre>
 
 <p>Will point the route to the URL above.</p>
 
 <p>Static (or globally utilized) modules can use the <code>*</code> character to denote usage throughout the application.</p>
 
+<a name="passing-data"></a>
+<br><br>
 <h3>Passing Data</h3>
 
 <p>The router will split out any query string data and pass an object to the matched route(s). For example:</p>
 
-<pre><code>http://www.website.com/#!/route_to_module?one=apple&amp;two=orange
+<pre><code data-language="html">http://www.website.com/#!/route_to_module?one=apple&amp;two=orange
 </code></pre>
 
 <p>Will pass the following object back to the routes function:</p>
 
-<pre><code>{ one: "apple", two: "orange" }
+<pre><code data-language="javascript">{ one: "apple", two: "orange" }
 </code></pre>
 
 <p>So, if the route calls <code>renderModule</code> you can access this data using the following:</p>
 
-<pre><code>renderModule: function(url_data){
+<pre><code data-language="javascript">renderModule: function(url_data){
     // url_data contains the query string as an object...
 }
 </code></pre>
-
-<hr><h2>Events</h2>
+<a name="events"></a>
+<hr>
+<h2>Events</h2>
 
 <p>Events listeners are created using a simple structur similar to other frameworks:</p>
 
-<pre><code>events: {
+<pre><code data-language="javascript">events: {
     '{event} {object}': '{fn}'
 }
 </code></pre>
@@ -217,19 +228,21 @@ the module.</p>
 <p>So, for a click event you could specify <code>'click .something': 'doSomething'</code> which would fire the <code>doSomething</code> method and would return 
 the event.</p>
 
-<hr><h2>Templates</h2>
+<a name="templates"></a>
+<hr>
+<h2>Templates</h2>
 
 <p>Templates should be placed in the <code>/templates</code> directory and given the same file name as the module and use the <code>.tpl</code> extension.</p>
 
 <p>ColtJS includes basic data replacement using Mustache-style tags, for example:</p>
 
-<pre><code>&lt;h1&gt;{{title}}&lt;/h1&gt;
+<pre><code data-language="html">&lt;h1&gt;{{title}}&lt;/h1&gt;
 &lt;p&gt;{{content}}&lt;/p&gt;
 </code></pre>
 
 <p>If another templating engine is required, simply pass it into the <code>main.js</code> file, then replace the render function. For example, using <a href="https://github.com/janl/mustache.js">MustacheJS</a>:</p>
 
-<pre><code>require.config({
+<pre><code data-language="javascript">require.config({
     baseUrl: "js/",
     paths: {
         colt:       'libs/colt',
@@ -263,44 +276,48 @@ define(['colt','mustache'], function (Colt,Mustache) {
 });
 </code></pre>
 
-<hr><h2>Persistent Storage</h2>
+<a name="persistent-storage"></a>
+<hr>
+<h2>Persistent Storage</h2>
 
 <p>Colt includes support for persistent storage using <code>localStorage</code>, with a fallback to cookies for older browsers. The methods to utilize this are as follows: </p>
 
 <p><strong>Create Storage Instance:</strong></p>
 
-<pre><code>Colt.store('some_key','some_value');
+<pre><code data-language="javascript">Colt.store('some_key','some_value');
 </code></pre>
 
 <p><strong>Retrieve Storage Instance:</strong></p>
 
-<pre><code>Colt.store('some_key');
+<pre><code data-language="javascript">Colt.store('some_key');
 </code></pre>
 
 <p><strong>Remove Storage Instance:</strong></p>
 
-<pre><code>Colt.store('some_key',null);
+<pre><code data-language="javascript">Colt.store('some_key',null);
 </code></pre>
 
-<hr><h2>Pub/Sub</h2>
+<a name="pub-sub"></a>
+<hr>
+<h2>Pub/Sub</h2>
 
 <p>Colt includes publish + subscribe functions to allow decoupling of events and facilitate interation between modules. The methods for pub/sub implementation are as follows:</p>
 
 <p><strong>Subscribe:</strong></p>
 
-<pre><code>var token = Colt.subscribe('topic', function(args){
+<pre><code data-language="javascript">var token = Colt.subscribe('topic', function(args){
     ...function actions...
 });
 </code></pre>
 
 <p><strong>Publish:</strong></p>
 
-<pre><code>Colt.publish('topic',args);
+<pre><code data-language="javascript">Colt.publish('topic',args);
 </code></pre>
 
 <p><strong>Unsubscribe:</strong></p>
 
-<pre><code>Colt.unsubscribe(token);
+<pre><code data-language="javascript">Colt.unsubscribe(token);
 </code></pre>
       </section>
 

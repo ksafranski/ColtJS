@@ -660,6 +660,8 @@ pre code {
   padding: 0;
 }
 
+p > code { background: #1a1a1a; }
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -685,7 +687,7 @@ hr {
   outline: none;
   height: 3px;
   background: transparent url("../images/hr.gif") center center repeat-x;
-  margin: 0 0 20px;
+  margin: 45px 0 35px;
 }
 
 dt {
