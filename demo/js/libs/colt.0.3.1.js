@@ -18,6 +18,7 @@
  * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+ 
 define(function () {
 
     /**
@@ -257,42 +258,39 @@ define(function () {
             selector,
             nodes;
 
-            // Prevent multiple binding of events
-            if (!scope.hasOwnProperty('events_bound')) {
-                // if there are no events on this sectional then we move on 
-                if (!events) {
-                    return;
-                }
+            // if there are no events on this sectional then we move on 
+            if (!events) {
+                return;
+            }
 
-                var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-                for (key in events) {
-                    if (events.hasOwnProperty(key)) {
-                        method = events[key];
-                        match = key.match(delegateEventSplitter);
-                        event_name = match[1];
-                        selector = match[2];
-                        /*
-                         * bind method on event for selector on scope.mid
-                         * the caller function has access to event, Colt, scope
-                         */
-                        nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
+            var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+            for (key in events) {
+                if (events.hasOwnProperty(key)) {
+                    method = events[key];
+                    match = key.match(delegateEventSplitter);
+                    event_name = match[1];
+                    selector = match[2];
+                    /*
+                     * bind method on event for selector on scope.mid
+                     * the caller function has access to event, Colt, scope
+                     */
+                    nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
 
-                        (function (nodes, method) {
-                            for (var i = 0, max = nodes.length; i < max; i++) {
-                                if (nodes[i].addEventListener) { // DOM Level 2 browsers
-                                    nodes[i].addEventListener(event_name, function (event) {
-                                        (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-                                        scope[method](event);
-                                    }, false);
-                                } else { // IE <= 8
-                                    nodes[i].attachEvent('on' + event_name, function (event) {
-                                        (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-                                        scope[method](event);
-                                    });
-                                }
+                    (function (nodes, method) {
+                        for (var i = 0, max = nodes.length; i < max; i++) {
+                            if (nodes[i].addEventListener) { // DOM Level 2 browsers
+                                nodes[i].addEventListener(event_name, function (event) {
+                                    (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
+                                    scope[method](event);
+                                }, false);
+                            } else { // IE <= 8
+                                nodes[i].attachEvent('on' + event_name, function (event) {
+                                    (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
+                                    scope[method](event);
+                                });
                             }
-                        })(nodes, method);
-                    }
+                        }
+                    })(nodes, method);
                 }
             }
         },
@@ -460,7 +458,7 @@ define(function () {
          */
 
         subscribe: function (topic, fn) {
-            var id = (++Colt.topic_id).toString();
+            var id = ++Colt.topic_id;
             if (!Colt.topics[topic]) {
                 Colt.topics[topic] = [];
             }
@@ -477,13 +475,11 @@ define(function () {
          */
 
         unsubscribe: function (token) {
-            for (var m in Colt.topics) {
-                if (Colt.topics[m]) {
-                    for (var i = 0, j = Colt.topics[m].length; i < j; i++) {
-                        if (Colt.topics[m][i].token === token) {
-                            Colt.topics[m].splice(i, 1);
-                            return token;
-                        }
+            for (var topic in Colt.topics) {
+                for (var i = 0, max = Colt.topics[topic].length; i < max; i++) {
+                    if (Colt.topics[topic][i].id === token) {
+                        Colt.topics[topic].splice(i, 1);
+                        return token;
                     }
                 }
             }
