@@ -237,7 +237,11 @@ define(function () {
                 root = location.pathname.replace(/[^\/]$/, '$&');
 
             // Change the URL
-            location.replace(root + location.search + '#!/' + fragment);
+            if(history.pushState()){
+                history.pushState(null, document.title, location.search + '#!/' + fragment);
+            }else{
+                location.replace(root + location.search + '#!/' + fragment);
+            }
 
         },
 
