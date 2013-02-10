@@ -34,6 +34,9 @@ define(function () {
 
         // Will auto-populate all module objects
         scope: {},
+        
+        // Will auto-populate dependencies
+        dependencies: {},
 
         /**
          * Adds module to object and then initiates routes
@@ -164,27 +167,43 @@ define(function () {
              */
 
             function loadDependencies(scope, route_fn) {
-                var arr_dep_name = [],
+                var dep_name,
+                    dep_src,
+                    arr_dep_name = [],
                     arr_dep_src = [];
+                
                 // Load module's dependencies
                 if (scope.hasOwnProperty('dependencies')) {
 
                     // Build Dependency Arrays
                     for (var dep in scope.dependencies) {
-                        arr_dep_name.push(dep);
-                        arr_dep_src.push(scope.dependencies[dep]);
+                        dep_name = dep;
+                        dep_src = scope.dependencies[dep];
+                        
+                        // Check if already loaded into global
+                        if(Colt.dependencies.hasOwnProperty(dep_src)){
+                            scope[dep_name] = Colt.dependencies[dep_src];
+                        
+                        // Add to array to be pulled via Require
+                        }else{
+                            arr_dep_name.push(dep_name);
+                            arr_dep_src.push(dep_src);
+                        }
                     }
 
                     // Load deps and add to object
                     require(arr_dep_src, function () {
                         for (var i = 0, max = arguments.length; i < max; i++) {
                             scope[arr_dep_name[i]] = arguments[i];
+                            
+                            // Store in globally accessible dependencies object
+                            Colt.dependencies[arr_dep_src[i]] = arguments[i];
                         }
                         // Fire function of route that called the processor
                         scope[route_fn](url_data);
                     });
 
-                    // Module has no dependencies
+                // Module has no dependencies
                 } else {
                     // Fire route's function
                     scope[route_fn](url_data);

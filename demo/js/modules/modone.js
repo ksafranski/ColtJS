@@ -23,7 +23,7 @@ define(function(){
         renderModuleOne: function(url_data){
             
             // Show any url data (query string)
-            console.log(url_data);
+            //console.log(url_data);
             
             // Render time to show dynamic templates...
             var d = new Date(), hour, ampm = 'am';
@@ -46,7 +46,7 @@ define(function(){
             Colt.render(this,data);
             
             // Get something from one of the utilities
-            console.log(this.messages.message_one);
+            //console.log(this.messages.message_one);
         },
     
         /**
