@@ -44,29 +44,30 @@ define(function () {
 
         init: function () {
 
-            var module;
+            var module,
+                _this = this;
 
             // Make available in global scope
-            window.Colt = Colt;
+            window.Colt = this;
 
-            require(Colt.modules, function () {
+            require(this.modules, function () {
 
                 // Load modules into application scope
                 for (var i = 0, max = arguments.length; i < max; i++) {
-                    module = Colt.modules[i].split('/').pop();
-                    Colt.scope[module] = arguments[i];
+                    module = _this.modules[i].split('/').pop();
+                    _this.scope[module] = arguments[i];
                     // Add module-id to scope
-                    Colt.scope[module].mid = module;
+                    _this.scope[module].mid = module;
                     // Create element reference
-                    Colt.scope[module].el = document.getElementById(module);
+                    _this.scope[module].el = document.getElementById(module);
                     // If jQuery is available create jQuery accessible DOM reference
                     if (typeof jQuery !== 'undefined') {
-                        Colt.scope[module].$el = jQuery('#' + module);
+                        _this.scope[module].$el = jQuery('#' + module);
                     }
                 }
 
                 // Call the router
-                Colt.router();
+                _this.router();
 
             });
         },
@@ -78,24 +79,25 @@ define(function () {
         router: function () {
 
             var cur_route = window.location.hash,
-                el_lock = null;
+                el_lock = null,
+                _this = this;
 
-            for (var module in Colt.scope) {
-                for (var route in Colt.scope[module].routes) {
-                    if(!Colt.routes.hasOwnProperty(route)){
-                        Colt.routes[route] = [[module, Colt.scope[module].routes[route]]];
+            for (var module in this.scope) {
+                for (var route in this.scope[module].routes) {
+                    if(!this.routes.hasOwnProperty(route)){
+                        this.routes[route] = [[module, this.scope[module].routes[route]]];
                     }else{
-                        Colt.routes[route].push([module,Colt.scope[module].routes[route]]);
+                        this.routes[route].push([module,this.scope[module].routes[route]]);
                     }
                 }
             }
 
             // Initial route
-            Colt.loadUrl(cur_route);
+            this.loadUrl(cur_route);
 
             // Bind change    
             window.onhashchange = function () {
-                Colt.loadUrl(window.location.hash);
+                _this.loadUrl(window.location.hash);
             };
 
         },
@@ -109,7 +111,7 @@ define(function () {
             var el_lock,
             module_name,
             url_data = {},
-            i;
+            _this = this;
 
             // Break apart fragment
             fragment = fragment.replace('#!/', '');
@@ -118,17 +120,17 @@ define(function () {
             fragment = fragment.split('?');
             if (fragment[1]) {
                 var qs = fragment[1].split('&');
-                for (i = 0; i < qs.length; i++) {
+                for (var i = 0; i < qs.length; i++) {
                     var bits = qs[i].split('=');
                     url_data[bits[0]] = bits[1];
                 }
             }
 
             // Check route for match(es)
-            for (var route in Colt.routes) {
-                for (i = 0, max = Colt.routes[route].length; i < max; i++) {
+            for (var route in this.routes) {
+                for (var i = 0, max = this.routes[route].length; i < max; i++) {
                     // Get Name
-                    module_name = Colt.routes[route][i][0];
+                    module_name = this.routes[route][i][0];
 
                     // Check route for match
                     if (fragment[0] === route || route === '*') {
@@ -138,7 +140,7 @@ define(function () {
                             // Prevents other routes in the same module from hiding this
                             el_lock = module_name;
                             // Send module to processor
-                            Colt.processor(module_name, Colt.routes[route][i][1], url_data);
+                            this.processor(module_name, this.routes[route][i][1], url_data);
                         }
 
                     } else {
@@ -158,7 +160,8 @@ define(function () {
 
         processor: function (module, route_fn, url_data) {
 
-            var scope = Colt.scope[module];
+            var scope = this.scope[module],
+                _this = this;
 
             /**
              * Checks for & loads any dependencies before calling the route's function
@@ -181,8 +184,8 @@ define(function () {
                         dep_src = scope.dependencies[dep];
                         
                         // Check if already loaded into global
-                        if(Colt.dependencies.hasOwnProperty(dep_src)){
-                            scope[dep_name] = Colt.dependencies[dep_src];
+                        if(_this.dependencies.hasOwnProperty(dep_src)){
+                            scope[dep_name] = _this.dependencies[dep_src];
                         
                         // Add to array to be pulled via Require
                         }else{
@@ -197,7 +200,7 @@ define(function () {
                             scope[arr_dep_name[i]] = arguments[i];
                             
                             // Store in globally accessible dependencies object
-                            Colt.dependencies[arr_dep_src[i]] = arguments[i];
+                            _this.dependencies[arr_dep_src[i]] = arguments[i];
                         }
                         // Fire function of route that called the processor
                         scope[route_fn](url_data);
@@ -214,7 +217,7 @@ define(function () {
             // Check to see if we are using inline template or if template has already been loaded/defined
             if (!scope.hasOwnProperty('template')) {
 
-                Colt.AJAX('templates/' + scope.mid + '.tpl', function (data) {
+                this.AJAX('templates/' + scope.mid + '.tpl', function (data) {
                     if (data) {
                         scope.template = data;
                         loadDependencies(scope, route_fn);
@@ -464,7 +467,7 @@ define(function () {
          */
 
         publish: function (topic, args) {
-            if (!Colt.topics[topic]) {
+            if (!this.topics.hasOwnProperty(topic)) {
                 return false;
             }
             setTimeout(function () {
@@ -485,11 +488,11 @@ define(function () {
          */
 
         subscribe: function (topic, fn) {
-            var id = ++Colt.topic_id;
-            if (!Colt.topics[topic]) {
-                Colt.topics[topic] = [];
+            var id = ++this.topic_id;
+            if (!this.topics[topic]) {
+                this.topics[topic] = [];
             }
-            Colt.topics[topic].push({
+            this.topics[topic].push({
                 id: id,
                 fn: fn
             });
@@ -503,9 +506,9 @@ define(function () {
 
         unsubscribe: function (token) {
             for (var topic in Colt.topics) {
-                for (var i = 0, max = Colt.topics[topic].length; i < max; i++) {
-                    if (Colt.topics[topic][i].id === token) {
-                        Colt.topics[topic].splice(i, 1);
+                for (var i = 0, max = this.topics[topic].length; i < max; i++) {
+                    if (this.topics[topic][i].id === token) {
+                        this.topics[topic].splice(i, 1);
                         return token;
                     }
                 }
