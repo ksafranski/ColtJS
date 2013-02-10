@@ -467,12 +467,19 @@ define(function () {
          */
 
         publish: function (topic, args) {
+            var _this = this;
             if (!this.topics.hasOwnProperty(topic)) {
                 return false;
             }
             setTimeout(function () {
-                var subscribers = Colt.topics[topic],
-                    len = subscribers ? subscribers.length : 0;
+                var subscribers = _this.topics[topic],
+                    len;
+                    
+                if(subscribers.length){
+                    len = subscribers.length;
+                }else{
+                    return false;
+                }
 
                 while (len--) {
                     subscribers[len].fn(args);
@@ -505,7 +512,7 @@ define(function () {
          */
 
         unsubscribe: function (token) {
-            for (var topic in Colt.topics) {
+            for (var topic in this.topics) {
                 for (var i = 0, max = this.topics[topic].length; i < max; i++) {
                     if (this.topics[topic][i].id === token) {
                         this.topics[topic].splice(i, 1);
