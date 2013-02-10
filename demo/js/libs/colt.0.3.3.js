@@ -79,7 +79,11 @@ define(function () {
 
             for (var module in Colt.scope) {
                 for (var route in Colt.scope[module].routes) {
-                    Colt.routes[route] = [module, Colt.scope[module].routes[route]];
+                    if(!Colt.routes.hasOwnProperty(route)){
+                        Colt.routes[route] = [[module, Colt.scope[module].routes[route]]];
+                    }else{
+                        Colt.routes[route].push([module,Colt.scope[module].routes[route]]);
+                    }
                 }
             }
 
@@ -101,7 +105,8 @@ define(function () {
         loadUrl: function (fragment) {
             var el_lock,
             module_name,
-            url_data = {};
+            url_data = {},
+            i;
 
             // Break apart fragment
             fragment = fragment.replace('#!/', '');
@@ -110,7 +115,7 @@ define(function () {
             fragment = fragment.split('?');
             if (fragment[1]) {
                 var qs = fragment[1].split('&');
-                for (var i = 0; i < qs.length; i++) {
+                for (i = 0; i < qs.length; i++) {
                     var bits = qs[i].split('=');
                     url_data[bits[0]] = bits[1];
                 }
@@ -118,9 +123,9 @@ define(function () {
 
             // Check route for match(es)
             for (var route in Colt.routes) {
-                if (Colt.routes.hasOwnProperty(route)) {
+                for (i = 0, max = Colt.routes[route].length; i < max; i++) {
                     // Get Name
-                    module_name = Colt.routes[route][0];
+                    module_name = Colt.routes[route][i][0];
 
                     // Check route for match
                     if (fragment[0] === route || route === '*') {
@@ -130,11 +135,11 @@ define(function () {
                             // Prevents other routes in the same module from hiding this
                             el_lock = module_name;
                             // Send module to processor
-                            Colt.processor(module_name, Colt.routes[route][1], url_data);
+                            Colt.processor(module_name, Colt.routes[route][i][1], url_data);
                         }
 
                     } else {
-                        // Hide sections that don't match
+                        // Hide sections that don't exist in current route
                         document.getElementById(module_name).innerHTML = '';
                     }
                 }
@@ -475,7 +480,7 @@ define(function () {
 
         /**
          * Unsubscribes from a topic
-         * @param  tokent    Token of the subscription
+         * @param  token    Token of the subscription
          */
 
         unsubscribe: function (token) {
