@@ -6,6 +6,17 @@ define(function(){
             'validation': 'utils/validation'
         },
         
+        validation_rules: {
+            'fname': {
+                'required': true,
+                'minlength': 2
+            },
+            'lname': {
+                'required': true,
+                'minlength': 2
+            }
+        },
+        
         events: {
             'submit form': 'processForm'
         },

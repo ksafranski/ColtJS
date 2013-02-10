@@ -159,12 +159,11 @@ define(function () {
 
             /**
              * Checks for & loads any dependencies before calling the route's function
-             * @param  Colt          The Colt object
              * @param  scope          The module object to be used.
              * @param  route_fn       The return function from the route.
              */
 
-            function loadDependencies(Colt, scope, route_fn) {
+            function loadDependencies(scope, route_fn) {
                 var arr_dep_name = [],
                     arr_dep_src = [];
                 // Load module's dependencies
@@ -199,14 +198,14 @@ define(function () {
                 Colt.AJAX('templates/' + scope.mid + '.tpl', function (data) {
                     if (data) {
                         scope.template = data;
-                        loadDependencies(Colt, scope, route_fn);
+                        loadDependencies(scope, route_fn);
                     } else {
                         console.error('Error Loading ' + scope.mid + '.tpl');
                     }
                 });
 
             } else {
-                loadDependencies(Colt, scope, route_fn);
+                loadDependencies(scope, route_fn);
             }
         },
 
