@@ -7,16 +7,18 @@ define(function(){
          * @param  test_all   Run an immediate test of all fields
          */
         
-        check: function(test_all){
+        bind: function(rules){
             
         },
         
         /**
-         * Proxy for check
+         * Process validation rules
          */
-        
-        check_all: function(){
-            
+         
+        check: function(rules){
+            for (var rule in rules){
+                
+            }
         },
         
         /**

@@ -286,7 +286,8 @@ define(function () {
             match,
             event_name,
             selector,
-            nodes;
+            nodes,
+            _this = this;
 
             // if there are no events on this sectional then we move on 
             if (!events) {
@@ -306,22 +307,33 @@ define(function () {
                      */
                     nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
 
-                    (function (nodes, method) {
-                        for (var i = 0, max = nodes.length; i < max; i++) {
-                            if (nodes[i].addEventListener) { // DOM Level 2 browsers
-                                nodes[i].addEventListener(event_name, function (event) {
-                                    (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-                                    scope[method](event);
-                                }, false);
-                            } else { // IE <= 8
-                                nodes[i].attachEvent('on' + event_name, function (event) {
-                                    (event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-                                    scope[method](event);
-                                });
-                            }
-                        }
-                    })(nodes, method);
+                    for (var i = 0, max = nodes.length; i < max; i++) {
+                        _this.bindEvent(nodes[i],event_name,scope[method],true);
+                    }
                 }
+            }
+        },
+        
+        /**
+         * Used to bind events
+         * @param  el     Element on which to attach event
+         * @param  evt    Event
+         * @param  fn     Function to be called
+         * @param  pdef   Bool to preventDefault
+         */
+        
+        bindEvent: function(el, evt, fn, pdef){
+            pdef = pdef || false;
+            if(el.addEventListener){ // Modern browsers
+                el.addEventListener(evt, function (event){
+                    if(pdef){ event.preventDefault ? event.preventDefault() : event.returnValue = false; }
+                    fn(event);
+                }, false);
+            }else { // IE <= 8 
+                el.attachEvent('on'+evt, function (event){
+                    if(pdef){ event.preventDefault ? event.preventDefault() : event.returnValue = false; }
+                    fn(event);
+                });
             }
         },
 
