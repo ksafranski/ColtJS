@@ -19,6 +19,11 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
  
+
+/**
+ * Colt Framework
+ * @return {object} 
+ */
 define(function () {
 
     /**
@@ -83,11 +88,13 @@ define(function () {
                 _this = this;
 
             for (var module in this.scope) {
-                for (var route in this.scope[module].routes) {
-                    if(!this.routes.hasOwnProperty(route)){
-                        this.routes[route] = [[module, this.scope[module].routes[route]]];
-                    }else{
-                        this.routes[route].push([module,this.scope[module].routes[route]]);
+                if (this.scope.hasOwnProperty(module)) {
+                    for (var route in this.scope[module].routes) {
+                        if (!this.routes.hasOwnProperty(route)) {
+                            this.routes[route] = [[module, this.scope[module].routes[route]]];
+                        } else {
+                            this.routes[route].push([module,this.scope[module].routes[route]]);
+                        }
                     }
                 }
             }
@@ -109,9 +116,9 @@ define(function () {
 
         loadUrl: function (fragment) {
             var el_lock,
-            module_name,
-            url_data = {},
-            _this = this;
+                module_name,
+                url_data = {},
+                _this = this;
 
             // Break apart fragment
             fragment = fragment.replace('#!/', '');
@@ -120,7 +127,7 @@ define(function () {
             fragment = fragment.split('?');
             if (fragment[1]) {
                 var qs = fragment[1].split('&');
-                for (var i = 0; i < qs.length; i++) {
+                for (var i = 0, max = qs.length; i < max; i++) {
                     var bits = qs[i].split('=');
                     url_data[bits[0]] = bits[1];
                 }
@@ -128,24 +135,26 @@ define(function () {
 
             // Check route for match(es)
             for (var route in this.routes) {
-                for (var i = 0, max = this.routes[route].length; i < max; i++) {
-                    // Get Name
-                    module_name = this.routes[route][i][0];
+                if (this.routes.hasOwnProperty(route)) {
+                    for (var i = 0, max = this.routes[route].length; i < max; i++) {
+                        // Get Name
+                        module_name = this.routes[route][i][0];
 
-                    // Check route for match
-                    if (fragment[0] === route || route === '*') {
+                        // Check route for match
+                        if (fragment[0] === route || route === '*') {
 
-                        if (el_lock !== module_name) {
+                            if (el_lock !== module_name) {
 
-                            // Prevents other routes in the same module from hiding this
-                            el_lock = module_name;
-                            // Send module to processor
-                            this.processor(module_name, this.routes[route][i][1], url_data);
+                                // Prevents other routes in the same module from hiding this
+                                el_lock = module_name;
+                                // Send module to processor
+                                this.processor(module_name, this.routes[route][i][1], url_data);
+                            }
+
+                        } else {
+                            // Hide sections that don't exist in current route
+                            document.getElementById(module_name).innerHTML = '';
                         }
-
-                    } else {
-                        // Hide sections that don't exist in current route
-                        document.getElementById(module_name).innerHTML = '';
                     }
                 }
             }
@@ -180,17 +189,19 @@ define(function () {
 
                     // Build Dependency Arrays
                     for (var dep in scope.dependencies) {
-                        dep_name = dep;
-                        dep_src = scope.dependencies[dep];
-                        
-                        // Check if already loaded into global
-                        if(_this.dependencies.hasOwnProperty(dep_src)){
-                            scope[dep_name] = _this.dependencies[dep_src];
-                        
-                        // Add to array to be pulled via Require
-                        }else{
-                            arr_dep_name.push(dep_name);
-                            arr_dep_src.push(dep_src);
+                        if (scope.dependencies.hasOwnProperty(dep)) {
+                            dep_name = dep;
+                            dep_src = scope.dependencies[dep];
+                            
+                            // Check if already loaded into global
+                            if(_this.dependencies.hasOwnProperty(dep_src)){
+                                scope[dep_name] = _this.dependencies[dep_src];
+                            
+                            // Add to array to be pulled via Require
+                            }else{
+                                arr_dep_name.push(dep_name);
+                                arr_dep_src.push(dep_src);
+                            }
                         }
                     }
 
@@ -263,9 +274,9 @@ define(function () {
                 root = location.pathname.replace(/[^\/]$/, '$&');
 
             // Change the URL
-            if(history.pushState()){
+            if (history.pushState()) {
                 history.pushState(null, document.title, location.search + '#!/' + fragment);
-            }else{
+            } else {
                 location.replace(root + location.search + '#!/' + fragment);
             }
 
@@ -283,10 +294,10 @@ define(function () {
         delegateEvents: function (events, scope) {
 
             var method,
-            match,
-            event_name,
-            selector,
-            nodes;
+                match,
+                event_name,
+                selector,
+                nodes;
 
             // if there are no events on this sectional then we move on 
             if (!events) {
@@ -337,10 +348,10 @@ define(function () {
         AJAX: function (url, callback, method, async, data) {
             // Set variables
             var request = false;
-            url = url || "";
-            method = method || "GET";
-            async = async || true;
-            data = data || null;
+                url = url || "";
+                method = method || "GET";
+                async = async || true;
+                data = data || null;
 
             // Mozilla/Safari/Non-IE
             if (window.XMLHttpRequest) {
@@ -430,9 +441,10 @@ define(function () {
              */
 
             function createCookie(key, value, exp) {
-                var date = new Date();
+                var date = new Date(),
+                    expires;
                 date.setTime(date.getTime() + (exp * 24 * 60 * 60 * 1000));
-                var expires = "; expires=" + date.toGMTString();
+                expires = "; expires=" + date.toGMTString();
                 document.cookie = key + "=" + value + expires + "; path=/";
             }
 
@@ -442,8 +454,8 @@ define(function () {
              */
 
             function readCookie(key) {
-                var nameEQ = key + "=";
-                var ca = document.cookie.split(';');
+                var nameEQ = key + "=",
+                    ca = document.cookie.split(';');
                 for (var i = 0, max = ca.length; i < max; i++) {
                     var c = ca[i];
                     while (c.charAt(0) === ' ') c = c.substring(1, c.length);
@@ -475,9 +487,9 @@ define(function () {
                 var subscribers = _this.topics[topic],
                     len;
                     
-                if(subscribers.length){
+                if (subscribers.length) {
                     len = subscribers.length;
-                }else{
+                } else {
                     return false;
                 }
 
@@ -513,10 +525,12 @@ define(function () {
 
         unsubscribe: function (token) {
             for (var topic in this.topics) {
-                for (var i = 0, max = this.topics[topic].length; i < max; i++) {
-                    if (this.topics[topic][i].id === token) {
-                        this.topics[topic].splice(i, 1);
-                        return token;
+                if (this.topics.hasOwnProperty(topic)) {
+                    for (var i = 0, max = this.topics[topic].length; i < max; i++) {
+                        if (this.topics[topic][i].id === token) {
+                            this.topics[topic].splice(i, 1);
+                            return token;
+                        }
                     }
                 }
             }
