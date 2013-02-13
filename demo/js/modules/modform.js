@@ -10,11 +10,13 @@ define(function(){
         validation_rules: {
             'fname': {
                 'required': true,
-                'minlength': 2
+                'minlength': 2,
+                'maxlength': 32
             },
             'lname': {
                 'required': true,
-                'minlength': 2
+                'minlength': 2,
+                'maxlength': 32
             }
         },
         
@@ -37,7 +39,7 @@ define(function(){
         },
         
         processForm: function(event){
-            alert('Submitted!');
+            this.validation.check_all(this);
         }
         
     };

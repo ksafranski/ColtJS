@@ -4,7 +4,7 @@ define(function(){
         
         /**
          * Check function to validate values
-         * @param  test_all   Run an immediate test of all fields
+         * @param  module   Passes in the scope of the module
          */
         
         bind: function(module){
@@ -12,31 +12,54 @@ define(function(){
                 _this = this,
                 fn;
             for (var name in module.validation_rules){
-                console.log('BIND: '+name);
                 field = module.el.querySelectorAll('[name='+name+']');
-                (function(name){
+                (function(module,name){
                     Colt.bindEvent(field[0], 'blur', function(){
-                        _this.check(name);
+                        _this.check(module,name);
                     });
-                })(name);
+                })(module,name);
+            }
+        },
+        
+        /**
+         * Loops through all fields and fires check method
+         * @param  module    Scope of the module
+         */ 
+        
+        check_all: function(module){
+            for (var name in module.validation_rules){
+                this.check(module,name);
             }
         },
         
         /**
          * Process validation rules
+         * @param  module   Scope of the module
+         * @param  name     Name of the field to check
          */
          
-        check: function(name){
-            console.log('Check '+name);
+        check: function(module,name){
+            var field, 
+                value,
+                result;
+            field = module.el.querySelectorAll('[name='+name+']');
+            value = field[0].value;
+            for (var rule in module.validation_rules[name]){
+                result = this.test(rule,value,module.validation_rules[name][rule],module);
+                
+                alert('Rule:'+name+' - '+rule+' - '+module.validation_rules[name][rule]+' = '+result);
+            }
         },
         
         /**
          * Function to run tests
-         * @param  rule    Rule to check against
-         * @param  value   Value to test
+         * @param  rule       Rule to check against
+         * @param  value      Value to test
+         * @param  condition  Condition of the test
+         * @param  module     Scope of the module
          */
         
-        test: function(rule,value){
+        test: function(rule,value,condition,module){
             
             switch (rule.toLowerCase()) {
 
@@ -64,15 +87,15 @@ define(function(){
                 case 'url':
                     return /^(((http|https|ftp):\/\/)?([[a-zA-Z0-9]\-\.])+(\.)([[a-zA-Z0-9]]){2,4}([[a-zA-Z0-9]\/+=%&_\.~?\-]*))*$/.test(value);
     
-                case 'matches':
-                    return (value === $($scope.el).find('[name="' + condition + '"]').val());
-    
                 case 'minlength':
                     return value.length >= condition;
     
                 case 'maxlength':
                     return value.length <= condition;
-    
+            
+                case 'matches':
+                    return (module.el.querySelectorAll('[name='+condition+']')[0].value === value);
+
                 case 'uszip':
                     return /^([0-9]{5}(-[0-9]{4})?)$/.test(value);
     
