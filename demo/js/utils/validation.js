@@ -7,18 +7,27 @@ define(function(){
          * @param  test_all   Run an immediate test of all fields
          */
         
-        bind: function(rules){
-            
+        bind: function(module){
+            var field,
+                _this = this,
+                fn;
+            for (var name in module.validation_rules){
+                console.log('BIND: '+name);
+                field = module.el.querySelectorAll('[name='+name+']');
+                (function(name){
+                    Colt.bindEvent(field[0], 'blur', function(){
+                        _this.check(name);
+                    });
+                })(name);
+            }
         },
         
         /**
          * Process validation rules
          */
          
-        check: function(rules){
-            for (var rule in rules){
-                
-            }
+        check: function(name){
+            console.log('Check '+name);
         },
         
         /**
