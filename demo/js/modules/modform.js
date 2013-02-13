@@ -33,6 +33,7 @@ define(function(){
         renderModuleForm: function(){            
             // Render template
             Colt.render(this);
+            this.validation.bind(this);
         },
         
         processForm: function(event){
