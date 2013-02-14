@@ -1,4 +1,16 @@
 define(function(){
+    
+    /**
+     * Handle all form validation and messaging
+     * 
+     * HTML Output of error messages:
+     *    <div class="validation_error" id="validation_error_{field_name}">
+     *         <ul>
+     *             <li>Validation Error Message</li>
+     *             ....
+     *         </ul>
+     *    </div>
+     */
 
     var validation = {
         
@@ -8,19 +20,21 @@ define(function(){
          */
         
         bind: function(module){
-            var field,
-                _this = this,
-                fn;
-            for (var name in module.validation_rules){
-                field = module.el.querySelectorAll('[name='+name+']');
-                // Loop through validation_events
-                for (var i=0, max=module.validation_events.length; i<max; i++){
-                    // Bind to event
-                    (function(module,name,event){
-                        Colt.bindEvent(field[0], event, function(){
-                            _this.check(module,name);
-                        });
-                    })(module,name,module.validation_events[i]);
+            if(module.validation_config.events.length){
+                var field,
+                    _this = this,
+                    fn;
+                for (var name in module.validation_config.rules){
+                    field = module.el.querySelectorAll('[name='+name+']');
+                    // Loop through validation_events
+                    for (var i=0, max=module.validation_config.events.length; i<max; i++){
+                        // Bind to event
+                        (function(module,name,event){
+                            Colt.bindEvent(field[0], event, function(){
+                                _this.check(module,name);
+                            });
+                        })(module,name,module.validation_config.events[i]);
+                    }
                 }
             }
         },
@@ -33,8 +47,8 @@ define(function(){
         check_all: function(module){
             var pass_all = true,
                 result;
-            for (var name in module.validation_rules){
-                result = this.check(module,name);
+            for (var name in module.validation_config.rules){
+                result = this.check(module,name,true);
                 if(!result){
                     pass_all = false;
                 }
@@ -48,25 +62,27 @@ define(function(){
          * @param  name     Name of the field to check
          */
          
-        check: function(module,name){
+        check: function(module,name,check_all){
             var field, 
                 value,
                 result,
                 pass = true,
-                errors = [];
+                errors = [],
+                check_all = check_all || false;
             field = module.el.querySelectorAll('[name='+name+']');
             value = field[0].value;
-            for (var rule in module.validation_rules[name]){
-                result = this.test(rule,value,module.validation_rules[name][rule],module);
+            for (var rule in module.validation_config.rules[name]){
+                result = this.test(rule,value,module.validation_config.rules[name][rule],module);
                 if(!result){
                     pass = false;
                     errors.push(rule);
                 }
             }
-            // Errors present, show errors to user
-            if(!pass){
+            
+            if(!check_all){
                 this.show_errors(module,name,errors);
             }
+
             // Return result (used by check_all)
             return pass;
         },
@@ -79,10 +95,35 @@ define(function(){
          */
          
         show_errors: function(module, name, rules){
-            var errors;
-            for (var i=0, max=rules.length; i<max; i++){
-                console.log(name + ' failed ' + rules[i]);
-            }  
+            var errors = '',
+                err_id = 'validation_error_'+name,
+                message,
+                field = module.el.querySelectorAll('[name='+name+']')[0];
+                
+            if(!rules.length){
+                if(document.getElementById(err_id)){
+                    return (elem=document.getElementById(err_id)).parentNode.removeChild(elem);
+                }
+            }else{
+                // Create error element
+                var err_node = document.createElement('div');
+                // Set error msg ID
+                err_node.id = err_id;
+                err_node.className = 'validation_error';
+                // Create error list
+                for (var i=0, max=rules.length; i<max; i++){
+                    message = module.validation_config.messages[rules[i]];
+                    message = message.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
+                        return module.validation_config.rules[name][match];
+                    });
+                    errors += '<li>'+message+'</li>';
+                }
+                if(!document.getElementById(err_id)){
+                    // Append element
+                    field.parentElement.insertBefore(err_node, field);
+                }
+                document.getElementById(err_id).innerHTML = '<ul>'+errors+'</ul>';
+            }
         },
         
         /**

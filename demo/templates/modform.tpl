@@ -12,5 +12,11 @@
     <label>Phone:</label>
     <input type="tel" name="phone" placeholder="Phone Number">
     
+    <label>Password</label>
+    <input type="password" name="password" placeholder="Password">
+    
+    <label>Confirm Password</label>
+    <input type="password" name="password_confirm" placeholder="Confirm Password">
+    
     <button>Submit</button>
 </form>
