@@ -75,6 +75,12 @@ define(function () {
                 _this.router();
 
             });
+            
+            // Polyfill for bind()
+            if (!Function.prototype.bind) {
+                this.polyfill_bind();
+            }
+            
         },
 
         /**
@@ -272,13 +278,10 @@ define(function () {
 
             var location = window.location,
                 root = location.pathname.replace(/[^\/]$/, '$&');
-
-            // Change the URL
-            if (history.pushState()) {
-                history.pushState(null, document.title, location.search + '#!/' + fragment);
-            } else {
-                location.replace(root + location.search + '#!/' + fragment);
-            }
+            
+            location.replace(root + location.search + '#!/' + fragment);
+            
+            return true;
 
         },
 
@@ -319,7 +322,7 @@ define(function () {
                     nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
 
                     for (var i = 0, max = nodes.length; i < max; i++) {
-                        _this.bindEvent(nodes[i],event_name,scope[method],true);
+                        _this.bindEvent(nodes[i],event_name,scope[method].bind(scope),true);
                     }
                 }
             }
@@ -547,6 +550,31 @@ define(function () {
                 }
             }
             return false;
+        },
+        
+        /**
+         * Polyfill for .bind()
+         */
+        polyfill_bind: function(){
+            Function.prototype.bind = function (obj) {
+                // closest thing possible to the ECMAScript 5 internal IsCallable function
+                if (typeof this !== 'function') {
+                    throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+                }
+        
+                var slice = [].slice,
+                    args = slice.call(arguments, 1),
+                    self = this,
+                    nop = function () { },
+                    bound = function () {
+                        return self.apply(this instanceof nop ? this : (obj || {}),
+                                          args.concat(slice.call(arguments)));
+                    };
+        
+                bound.prototype = this.prototype;
+        
+                return bound;
+            };
         }
 
 

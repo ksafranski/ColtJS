@@ -278,13 +278,8 @@ define(function () {
 
             var location = window.location,
                 root = location.pathname.replace(/[^\/]$/, '$&');
-
-            // Change the URL
-            if (history && history.pushState) {
-                history.pushState(null, document.title, location.search + '#!/' + fragment);
-            } else {
-                location.replace(root + location.search + '#!/' + fragment);
-            }
+            
+            location.replace(root + location.search + '#!/' + fragment);
             
             return true;
 
