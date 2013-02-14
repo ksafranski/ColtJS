@@ -13,11 +13,15 @@ define(function(){
                 fn;
             for (var name in module.validation_rules){
                 field = module.el.querySelectorAll('[name='+name+']');
-                (function(module,name){
-                    Colt.bindEvent(field[0], 'blur', function(){
-                        _this.check(module,name);
-                    });
-                })(module,name);
+                // Loop through validation_events
+                for (var i=0, max=module.validation_events.length; i<max; i++){
+                    // Bind to event
+                    (function(module,name,event){
+                        Colt.bindEvent(field[0], event, function(){
+                            _this.check(module,name);
+                        });
+                    })(module,name,module.validation_events[i]);
+                }
             }
         },
         
@@ -27,9 +31,15 @@ define(function(){
          */ 
         
         check_all: function(module){
+            var pass_all = true,
+                result;
             for (var name in module.validation_rules){
-                this.check(module,name);
+                result = this.check(module,name);
+                if(!result){
+                    pass_all = false;
+                }
             }
+            return pass_all;
         },
         
         /**
@@ -41,14 +51,38 @@ define(function(){
         check: function(module,name){
             var field, 
                 value,
-                result;
+                result,
+                pass = true,
+                errors = [];
             field = module.el.querySelectorAll('[name='+name+']');
             value = field[0].value;
             for (var rule in module.validation_rules[name]){
                 result = this.test(rule,value,module.validation_rules[name][rule],module);
-                
-                alert('Rule:'+name+' - '+rule+' - '+module.validation_rules[name][rule]+' = '+result);
+                if(!result){
+                    pass = false;
+                    errors.push(rule);
+                }
             }
+            // Errors present, show errors to user
+            if(!pass){
+                this.show_errors(module,name,errors);
+            }
+            // Return result (used by check_all)
+            return pass;
+        },
+        
+        /**
+         * Outputs DOM to show errors in validation
+         * @param  module    Scope of the module
+         * @param  name      Name of the field;
+         * @param  rules     Array of rules that failed
+         */
+         
+        show_errors: function(module, name, rules){
+            var errors;
+            for (var i=0, max=rules.length; i<max; i++){
+                console.log(name + ' failed ' + rules[i]);
+            }  
         },
         
         /**

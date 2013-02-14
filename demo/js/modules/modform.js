@@ -7,6 +7,8 @@ define(function(){
             'messages': 'utils/messages'
         },
         
+        validation_events: ['keypress','blur'],
+        
         validation_rules: {
             'fname': {
                 'required': true,
@@ -18,6 +20,12 @@ define(function(){
                 'minlength': 2,
                 'maxlength': 32
             }
+        },
+        
+        validation_messages: {
+            'required': "This field is required",
+            'minlength': "This field must contain at least {{minlength}} characters",
+            'maxlength': "This field must not contain more than {{maxlength}} characters"
         },
         
         events: {
@@ -39,7 +47,10 @@ define(function(){
         },
         
         processForm: function(event){
-            this.validation.check_all(this);
+            var check_all = this.validation.check_all(this);
+            if(!check_all){
+                alert('Please fill out all required fields');
+            }
         }
         
     };
