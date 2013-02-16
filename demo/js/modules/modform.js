@@ -3,8 +3,7 @@ define(function(){
     var modform = {
            
         dependencies: {
-            'validation': 'utils/validation',
-            'messages': 'utils/messages'
+            'validation': 'utils/validation'
         },
         
         /**

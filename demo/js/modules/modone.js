@@ -1,10 +1,6 @@
 define(function(){    
     
     var modone = {
-           
-        dependencies: {
-            'messages': 'utils/messages'
-        },
         
         events: {
             'click .two': 'goNext',
