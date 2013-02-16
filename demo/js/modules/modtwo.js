@@ -7,8 +7,6 @@ define(function(){
         },
         
         events: {
-            'click .one': 'goBack',
-            'click .three': 'goNext',
             'click .open-modal': 'openModal'
         },
        
@@ -22,20 +20,6 @@ define(function(){
         renderModuleTwo: function(){
             /** calling render for this module */
             Colt.render(this);
-        },
-        
-        /**
-         * Go back to modone   
-         */
-        goBack: function () {
-            Colt.navigate('modone');
-        },
-
-        /**
-         * Go to modthree  
-         */
-        goNext: function () {
-            Colt.navigate('modthree');
         },
         
         /**

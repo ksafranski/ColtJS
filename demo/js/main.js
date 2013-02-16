@@ -10,7 +10,8 @@ define(['colt'], function (Colt) {
     
     // Define all of the modules
     Colt.modules = [
-        'modules/static',
+        'modules/header',
+        'modules/navigation',
         'modules/modone',
         'modules/modtwo',
         'modules/modthree',

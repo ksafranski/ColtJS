@@ -7,9 +7,6 @@ define(function(){
         },
         
         events: {
-            'click .one': 'goOne',
-            'click .two': 'goBack',
-            
             // Demonstrate notifications
             'click .show-success': 'showSuccess',
             'click .show-warning': 'showWarning',
@@ -27,20 +24,6 @@ define(function(){
         renderModuleThree: function(){
             /** calling render for this module */
             Colt.render(this);
-        },
-        
-        /**
-         * Return to modtwo
-         */
-        goBack: function () {
-            Colt.navigate('modtwo');
-        },
-
-        /**
-         * Return to modone
-         */
-        goOne: function () {
-            Colt.navigate('modone');
         },
         
         showSuccess: function(){

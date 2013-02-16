@@ -1,25 +1,22 @@
 define(function(){    
     
-    var static = {
+    var header = {
           
     
         routes: {
-            '*' : 'renderStatic'
+            '*' : 'renderHeader'
         },
     
         /**
          * Loads up this modules main view
-         * @param {object} app
-         * @param {object} scope
-         * @return {object} 
          */
-        renderStatic: function(){            
+        renderHeader: function(){            
             // Render template
             Colt.render(this);
         }
         
     };
     
-    return static;
+    return header;
     
 });

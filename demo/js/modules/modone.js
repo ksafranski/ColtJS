@@ -3,8 +3,6 @@ define(function(){
     var modone = {
         
         events: {
-            'click .two': 'goNext',
-            'click .three': 'goThree',
             'click .modone-event': 'testEvent'
         },
     
@@ -43,20 +41,6 @@ define(function(){
             
             // Get something from one of the utilities
             //console.log(this.messages.message_one);
-        },
-    
-        /**
-         * Takes end-user to next module
-         */
-        goNext: function() {
-            Colt.navigate('modtwo');
-        },
-    
-        /**
-         * Go to modthree
-         */
-        goThree: function() {
-            Colt.navigate('modthree');
         },
         
         testEvent: function(){
