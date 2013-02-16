@@ -26,11 +26,11 @@ The first parameter is the `type`, which is also the class of the notification, 
 The following configuration parameters can be set:
 
 ```
-notification.notification_id: 'notification', // ID of the notification area
-notification.timeout: true, // Should the notification auto-timeout?
-notification.lifespan: 5000, // If timeout = true, how long?
-notification.show_close_button: true, // Show a button to allow user to close?
-notification.close_button_class: 'notification-close',
+this.notification.notification_id: 'notification', // ID of the notification area
+this.notification.timeout: true, // Should the notification auto-timeout?
+this.notification.lifespan: 5000, // If timeout = true, how long?
+this.notification.show_close_button: true, // Show a button to allow user to close?
+this.notification.close_button_class: 'notification-close',
 ```
 
 ## Styling

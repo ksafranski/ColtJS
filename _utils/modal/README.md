@@ -33,10 +33,10 @@ Attaching the class `.modal-close` to a button/link/etc will bind that event to 
 The following configuration parameters can be set:
 
 ```
-modal.modal_overlay_id: 'modal-overlay', // ID of modal overlay
-modal.modal_id: 'modal', // ID of modal object
-modal.modal_content_id: 'modal-content', // ID of modal content region
-modal.modal_close_class: 'modal-close', // Class of objects to close modal
+this.modal.modal_overlay_id: 'modal-overlay', // ID of modal overlay
+this.modal.modal_id: 'modal', // ID of modal object
+this.modal.modal_content_id: 'modal-content', // ID of modal content region
+this.modal.modal_close_class: 'modal-close', // Class of objects to close modal
 ```
 
 ## Styling
