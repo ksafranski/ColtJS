@@ -21,6 +21,18 @@ this.notification.show('error','This is an error message.');
 
 The first parameter is the `type`, which is also the class of the notification, the second argument is the content of the notification.
 
+### Additional Configration
+
+The following configuration parameters can be set:
+
+```
+notification.notification_id: 'notification', // ID of the notification area
+notification.timeout: true, // Should the notification auto-timeout?
+notification.lifespan: 5000, // If timeout = true, how long?
+notification.show_close_button: true, // Show a button to allow user to close?
+notification.close_button_class: 'notification-close',
+```
+
 ## Styling
 
 Notifications are contained in a `div#notification` which gets the `type` class applied to it for styling individual types of notifications.

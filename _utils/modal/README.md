@@ -28,6 +28,17 @@ The `modal.open()` method accepts 2 paramaters, the first is the width of the mo
 
 Attaching the class `.modal-close` to a button/link/etc will bind that event to close the modal on click.
 
+### Additional Configuration
+
+The following configuration parameters can be set:
+
+```
+modal.modal_overlay_id: 'modal-overlay', // ID of modal overlay
+modal.modal_id: 'modal', // ID of modal object
+modal.modal_content_id: 'modal-content', // ID of modal content region
+modal.modal_close_class: 'modal-close', // Class of objects to close modal
+```
+
 ## Styling
 
 The modal uses two main components, a `div#modal_overlay` which is the transluscent layer that covers the page, and the `div#modal` which is the modal itself. Inside of `div#modal` is `div#modal-content` which is used as a container for the content loaded.
