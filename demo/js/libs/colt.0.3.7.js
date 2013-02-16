@@ -138,6 +138,12 @@ define(function () {
                     url_data[bits[0]] = bits[1];
                 }
             }
+            
+            // Store current route
+            this.current_route = fragment[0];
+            
+            // Store url data
+            this.url_data = url_data;
 
             // Check route for match(es)
             for (var route in this.routes) {
