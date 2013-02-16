@@ -108,7 +108,7 @@ define(function () {
             // Initial route
             this.loadUrl(cur_route);
 
-            // Bind change    
+            // Bind change
             window.onhashchange = function () {
                 _this.loadUrl(window.location.hash);
             };
@@ -279,7 +279,14 @@ define(function () {
             var location = window.location,
                 root = location.pathname.replace(/[^\/]$/, '$&');
             
-            location.replace(root + location.search + '#!/' + fragment);
+            if (history.pushState) {
+                // Browser supports pushState()
+                history.pushState(null,document.title, root + location.search + '#!/' + fragment);
+                _this.loadUrl(fragment);
+            }else{
+                // Older browser fallback
+                location.replace(root + location.search + '#!/' + fragment);
+            }
             
             return true;
 
