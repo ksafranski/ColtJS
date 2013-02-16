@@ -1,1 +1,1 @@
-<h1>Welcome to ColtJS</h1>
+<h1>ColtJS Demo</h1>

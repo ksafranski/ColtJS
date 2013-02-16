@@ -28,7 +28,14 @@ define(function(){
                 }
                 ampm = 'pm';
             }
-            var cur_time = hour + ':' + d.getMinutes() + ':' + d.getSeconds() + ' ' + ampm;
+            var min = d.getMinutes(), sec = d.getSeconds();
+            if(min<=9){
+                min = '0'+min;
+            }
+            if(sec<=9){
+                sec = '0'+sec;
+            }
+            var cur_time = hour + ':' + min + ':' + sec + ' ' + ampm;
             
             // Setup data for template
             var data = {
@@ -39,8 +46,6 @@ define(function(){
             // Render template
             Colt.render(this,data);
             
-            // Get something from one of the utilities
-            //console.log(this.messages.message_one);
         },
         
         testEvent: function(){
