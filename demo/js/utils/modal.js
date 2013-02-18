@@ -31,6 +31,9 @@ define(function () {
 
             // Set positioning
             modal.style.marginLeft = '-' + (Math.round(width / 2)) + 'px';
+            
+            // Set width
+            modal.style.width = width+'px';
 
             // Get max height value (cross-browser crap...)
             var height = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
