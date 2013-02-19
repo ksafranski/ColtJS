@@ -279,9 +279,10 @@ define(function () {
          */
 
         navigate: function (fragment) {
-
+                
             var location = window.location,
-                root = location.pathname.replace(/[^\/]$/, "$&");
+                root = location.pathname.replace(/[^\/]$/, "$&"),
+                _this = this;
 
             if (history.pushState) {
                 // Browser supports pushState()
@@ -311,7 +312,7 @@ define(function () {
                 match,
                 event_name,
                 selector,
-                nodes;
+                nodes,
                 _this = this;
 
             // if there are no events on this sectional then we move on
