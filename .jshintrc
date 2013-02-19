@@ -15,10 +15,11 @@
 
     "browser": true,
     "wsh": true,
+    "devel": true,
+    "jquery": true,
 
     "predef": [
         "require",
-        "define",
-        "browser"
+        "define"
     ]
 }
