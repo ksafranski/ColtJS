@@ -2,23 +2,23 @@ require.config({
     urlArgs: "bust=v"+(new Date().getTime()), // Comment out/remove to enable caching
     baseUrl: "js/",
     paths: {
-        colt:  'libs/colt.0.3.7'
+        colt:  "libs/colt.0.3.7"
     }
 });
 
-define(['colt'], function (Colt) {
-    
+define(["colt"], function (Colt) {
+
     // Define all of the modules
     Colt.modules = [
-        'modules/header',
-        'modules/navigation',
-        'modules/modone',
-        'modules/modtwo',
-        'modules/modthree',
-        'modules/modform'
+        "modules/header",
+        "modules/navigation",
+        "modules/modone",
+        "modules/modtwo",
+        "modules/modthree",
+        "modules/modform"
     ];
-    
-    // Initialize application 
-    Colt.init(); 
+
+    // Initialize application
+    Colt.init();
 
 });
