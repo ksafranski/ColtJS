@@ -1,28 +1,28 @@
 /**
  * Copyright (c) 2013 ColtJS
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy 
- * of this software and associated documentation files (the "Software"), to deal 
- * in the Software without restriction, including without limitation the rights 
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
- * of the Software, and to permit persons to whom the Software is furnished to do 
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all 
+ *
+ * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
- * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
- * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
- * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
  */
- 
+
 
 /**
  * Colt Framework
- * @return {object} 
+ * @return {object}
  */
 define(function () {
 
@@ -39,7 +39,7 @@ define(function () {
 
         // Will auto-populate all module objects
         scope: {},
-        
+
         // Will auto-populate dependencies
         dependencies: {},
 
@@ -59,15 +59,15 @@ define(function () {
 
                 // Load modules into application scope
                 for (var i = 0, max = arguments.length; i < max; i++) {
-                    module = _this.modules[i].split('/').pop();
+                    module = _this.modules[i].split("/").pop();
                     _this.scope[module] = arguments[i];
                     // Add module-id to scope
                     _this.scope[module].mid = module;
                     // Create element reference
                     _this.scope[module].el = document.getElementById(module);
                     // If jQuery is available create jQuery accessible DOM reference
-                    if (typeof jQuery !== 'undefined') {
-                        _this.scope[module].$el = jQuery('#' + module);
+                    if (typeof jQuery !== "undefined") {
+                        _this.scope[module].$el = jQuery("#" + module);
                     }
                 }
 
@@ -75,12 +75,12 @@ define(function () {
                 _this.router();
 
             });
-            
+
             // Polyfill for bind()
             if (!Function.prototype.bind) {
                 this.polyfill_bind();
             }
-            
+
         },
 
         /**
@@ -90,7 +90,6 @@ define(function () {
         router: function () {
 
             var cur_route = window.location.hash,
-                el_lock = null,
                 _this = this;
 
             for (var module in this.scope) {
@@ -123,49 +122,48 @@ define(function () {
         loadUrl: function (fragment) {
             var el_lock,
                 module_name,
-                url_data = {},
-                _this = this;
+                url_data = {};
 
             // Break apart fragment
-            fragment = fragment.replace('#!/', '');
+            fragment = fragment.replace("#!/", "");
 
             // Check for URL Data (Query String)
-            fragment = fragment.split('?');
+            fragment = fragment.split("?");
             if (fragment[1]) {
-                var qs = fragment[1].split('&');
+                var qs = fragment[1].split("&");
                 for (var i = 0, max = qs.length; i < max; i++) {
-                    var bits = qs[i].split('=');
+                    var bits = qs[i].split("=");
                     url_data[bits[0]] = bits[1];
                 }
             }
-            
+
             // Store current route
             this.current_route = fragment[0];
-            
+
             // Store url data
             this.url_data = url_data;
 
             // Check route for match(es)
             for (var route in this.routes) {
                 if (this.routes.hasOwnProperty(route)) {
-                    for (var i = 0, max = this.routes[route].length; i < max; i++) {
+                    for (var _i = 0, _max = this.routes[route].length; _i < _max; _i++) {
                         // Get Name
-                        module_name = this.routes[route][i][0];
+                        module_name = this.routes[route][_i][0];
 
                         // Check route for match
-                        if (fragment[0] === route || route === '*') {
+                        if (fragment[0] === route || route === "*") {
 
                             if (el_lock !== module_name) {
 
                                 // Prevents other routes in the same module from hiding this
                                 el_lock = module_name;
                                 // Send module to processor
-                                this.processor(module_name, this.routes[route][i][1], url_data);
+                                this.processor(module_name, this.routes[route][_i][1], url_data);
                             }
 
                         } else {
                             // Hide sections that don't exist in current route
-                            document.getElementById(module_name).innerHTML = '';
+                            document.getElementById(module_name).innerHTML = "";
                         }
                     }
                 }
@@ -195,22 +193,22 @@ define(function () {
                     dep_src,
                     arr_dep_name = [],
                     arr_dep_src = [];
-                
+
                 // Load module's dependencies
-                if (scope.hasOwnProperty('dependencies')) {
+                if (scope.hasOwnProperty("dependencies")) {
 
                     // Build Dependency Arrays
                     for (var dep in scope.dependencies) {
                         if (scope.dependencies.hasOwnProperty(dep)) {
                             dep_name = dep;
                             dep_src = scope.dependencies[dep];
-                            
+
                             // Check if already loaded into global
-                            if(_this.dependencies.hasOwnProperty(dep_src)){
+                            if (_this.dependencies.hasOwnProperty(dep_src)) {
                                 scope[dep_name] = _this.dependencies[dep_src];
-                            
+
                             // Add to array to be pulled via Require
-                            }else{
+                            } else {
                                 arr_dep_name.push(dep_name);
                                 arr_dep_src.push(dep_src);
                             }
@@ -221,7 +219,7 @@ define(function () {
                     require(arr_dep_src, function () {
                         for (var i = 0, max = arguments.length; i < max; i++) {
                             scope[arr_dep_name[i]] = arguments[i];
-                            
+
                             // Store in globally accessible dependencies object
                             _this.dependencies[arr_dep_src[i]] = arguments[i];
                         }
@@ -238,14 +236,14 @@ define(function () {
 
 
             // Check to see if we are using inline template or if template has already been loaded/defined
-            if (!scope.hasOwnProperty('template')) {
+            if (!scope.hasOwnProperty("template")) {
 
-                this.AJAX('templates/' + scope.mid + '.tpl', function (data) {
+                this.AJAX("templates/" + scope.mid + ".tpl", function (data) {
                     if (data) {
                         scope.template = data;
                         loadDependencies(scope, route_fn);
                     } else {
-                        console.error('Error Loading ' + scope.mid + '.tpl');
+                        console.error("Error Loading " + scope.mid + ".tpl");
                     }
                 });
 
@@ -277,30 +275,30 @@ define(function () {
         /**
          * Responsible for updating the history hash, and changing the URL
          * @param  {string} fragment the location to be loaded
-         * @return {bool} 
+         * @return {bool}
          */
 
         navigate: function (fragment) {
 
             var location = window.location,
-                root = location.pathname.replace(/[^\/]$/, '$&');
-            
+                root = location.pathname.replace(/[^\/]$/, "$&");
+
             if (history.pushState) {
                 // Browser supports pushState()
-                history.pushState(null,document.title, root + location.search + '#!/' + fragment);
+                history.pushState(null,document.title, root + location.search + "#!/" + fragment);
                 _this.loadUrl(fragment);
-            }else{
+            } else {
                 // Older browser fallback
-                location.replace(root + location.search + '#!/' + fragment);
+                location.replace(root + location.search + "#!/" + fragment);
             }
-            
+
             return true;
 
         },
 
         /**
          * Set callback for a module's event list.
-         * Using jQuery's on method, we can listen to the event_name on the 
+         * Using jQuery's on method, we can listen to the event_name on the
          * selector and call a specified method, passing in scope as event.data.scope
          *
          * @param  {Object} events has of events to be watched for
@@ -316,13 +314,13 @@ define(function () {
                 nodes;
                 _this = this;
 
-            // if there are no events on this sectional then we move on 
+            // if there are no events on this sectional then we move on
             if (!events) {
                 return;
             }
 
             var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-            for (key in events) {
+            for (var key in events) {
                 if (events.hasOwnProperty(key)) {
                     method = events[key];
                     match = key.match(delegateEventSplitter);
@@ -332,15 +330,15 @@ define(function () {
                      * bind method on event for selector on scope.mid
                      * the caller function has access to event, Colt, scope
                      */
-                    nodes = document.querySelectorAll('#' + scope.mid + ' ' + selector);
+                    nodes = document.querySelectorAll("#" + scope.mid + " " + selector);
 
                     for (var i = 0, max = nodes.length; i < max; i++) {
-                        _this.bindEvent(nodes[i],event_name,scope[method].bind(scope),true);
+                        _this.bindEvent(nodes[i], event_name, scope[method].bind(scope), true);
                     }
                 }
             }
         },
-        
+
         /**
          * Used to bind events
          * @param  el     Element on which to attach event
@@ -348,17 +346,17 @@ define(function () {
          * @param  fn     Function to be called
          * @param  pdef   Bool to preventDefault
          */
-        
-        bindEvent: function(el, evt, fn, pdef){
+
+        bindEvent: function (el, evt, fn, pdef) {
             pdef = pdef || false;
-            if(el.addEventListener){ // Modern browsers
-                el.addEventListener(evt, function (event){
-                    if(pdef){ event.preventDefault ? event.preventDefault() : event.returnValue = false; }
+            if (el.addEventListener) { // Modern browsers
+                el.addEventListener(evt, function (event) {
+                    if (pdef) { event.preventDefault ? event.preventDefault() : event.returnValue = false; }
                     fn(event);
                 }, false);
-            }else { // IE <= 8 
-                el.attachEvent('on'+evt, function (event){
-                    if(pdef){ event.preventDefault ? event.preventDefault() : event.returnValue = false; }
+            } else { // IE <= 8
+                el.attachEvent("on" + evt, function (event) {
+                    if (pdef) { event.preventDefault ? event.preventDefault() : event.returnValue = false; }
                     fn(event);
                 });
             }
@@ -399,12 +397,12 @@ define(function () {
                 request.open(method, url, async);
                 // Set request header (optional if GET method is used)
                 if (method === "POST") {
-                    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
                 }
                 // Assign (or define) response-handler/callback when ReadyState is changed.
                 request.onreadystatechange = function () {
                     if (request.readyState === 4) {
-                        if (typeof callback === 'function') {
+                        if (typeof callback === "function") {
                             callback(request.responseText);
                         }
                     }
@@ -445,7 +443,7 @@ define(function () {
             if (typeof value === "undefined") {
                 if (lsSupport) { // Native support
                     return localStorage.getItem(key);
-                } else { // Use cookie 
+                } else { // Use cookie
                     return readCookie(key);
                 }
             }
@@ -455,7 +453,7 @@ define(function () {
                 if (lsSupport) { // Native support
                     localStorage.removeItem(key);
                 } else { // Use cookie
-                    createCookie(key, '', -1);
+                    createCookie(key, "", -1);
                 }
             }
 
@@ -483,11 +481,11 @@ define(function () {
 
             function readCookie(key) {
                 var nameEQ = key + "=",
-                    ca = document.cookie.split(';');
+                    ca = document.cookie.split(";");
                 for (var i = 0, max = ca.length; i < max; i++) {
                     var c = ca[i];
-                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                    while (c.charAt(0) === " ") { c = c.substring(1, c.length); }
+                    if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length); }
                 }
                 return null;
             }
@@ -497,7 +495,7 @@ define(function () {
         // Placeholder object for pub/sub
         topics: {},
 
-        // ID for incrementing    
+        // ID for incrementing
         topic_id: 0,
 
         /**
@@ -514,7 +512,7 @@ define(function () {
             setTimeout(function () {
                 var subscribers = _this.topics[topic],
                     len;
-                    
+
                 if (subscribers.length) {
                     len = subscribers.length;
                 } else {
@@ -564,17 +562,17 @@ define(function () {
             }
             return false;
         },
-        
+
         /**
          * Polyfill for .bind()
          */
-        polyfill_bind: function(){
+        polyfill_bind: function () {
             Function.prototype.bind = function (obj) {
                 // closest thing possible to the ECMAScript 5 internal IsCallable function
-                if (typeof this !== 'function') {
-                    throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+                if (typeof this !== "function") {
+                    throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
                 }
-        
+
                 var slice = [].slice,
                     args = slice.call(arguments, 1),
                     self = this,
@@ -583,9 +581,9 @@ define(function () {
                         return self.apply(this instanceof nop ? this : (obj || {}),
                                           args.concat(slice.call(arguments)));
                     };
-        
+
                 bound.prototype = this.prototype;
-        
+
                 return bound;
             };
         }
