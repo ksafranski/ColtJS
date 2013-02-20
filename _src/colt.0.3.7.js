@@ -154,7 +154,6 @@ define(function () {
                         if (fragment[0] === route || route === "*") {
 
                             if (el_lock !== module_name) {
-
                                 // Prevents other routes in the same module from hiding this
                                 el_lock = module_name;
                                 // Send module to processor
@@ -162,8 +161,9 @@ define(function () {
                             }
 
                         } else {
-                            // Hide sections that don't exist in current route
+                            // Clear & Hide sections that don't exist in current route
                             document.getElementById(module_name).innerHTML = "";
+                            document.getElementById(module_name).style.display = "none";
                         }
                     }
                 }
@@ -260,13 +260,16 @@ define(function () {
 
         render: function (scope, data) {
             var template = scope.template,
+                // Get element
+                el = document.getElementById(scope.mid),
                 // Replace any mustache-style {{VAR}}'s
                 rendered = template.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
                     return data[match];
                 });
 
-            // Render to DOM
-            document.getElementById(scope.mid).innerHTML = rendered;
+            // Render to DOM & Show Element
+            el.innerHTML = rendered;
+            el.style.display = "block";
 
             // Build Event Listeners
             this.delegateEvents(scope.events, scope);
