@@ -44,17 +44,20 @@
           <!--<span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>-->
         </div>
 
-        <h1>ColtJS Module Framework</h1>
+        <h1>ColtJS Modular Framework</h1>
 
-<hr><p>ColtJS is a simple framework allowing for easy deployment of JavaScript Application using asynchronous module definition. It's only dependency is <a href="http://www.requirejs.org">RequireJS</a> 
-and it builds off simple principles of a centralized router loading modules only when requested to produce an efficient, easy-to-manage application structure.</p>
+<hr><p>ColtJS is a simple framework allowing for easy deployment of JavaScript Application using asynchronous module definition. It's only dependency is <a target="_blank" href="http://www.requirejs.org">RequireJS</a>. The central concept behind behind 
+    Colt is simplicity. The framework is built to be lightweight, flexible, and highly efficient.</p>
+    
+<p>There are plenty Swiss-Army-Knife frameworks out there, Colt aims to give a solid, reliable foundation with a minimal footprint and set of tools which are truly needed. It is easily expandable with <a target="_blank" href="https://github.com/Fluidbyte/ColtJS/tree/master/_utils">utils</a> that 
+    plug into the system and are only called when and if they are needed.
+</p>
 
 <p>The framework includes methods for handling <a href="#routing">routing &amp; navigation</a>, <a href="#templates">templates</a>, 
 <a href="#passing-data">url parsing</a>, <a href="#events">event binding</a>, <a href="#utils-dependencies">utilities &amp; dependencies</a>, 
 <a href="#persistent-storage">persistent storage</a> and <a href="#pub-sub">pub/sub</a> as well as other built in functions.</p>
 
-<p>The current version supports all modern browsers (including IE8 and above) but can easily be adapted to work with older browsers if needed. <em>Note: 
-we are working on an IE7 support shim which we hope to release shortly.</em></p>
+<p>The current version supports all modern browsers (including IE8 and above) but can easily be adapted to work with older browsers if needed.</p>
 
 <hr><h2>Get Started Quickly</h2>
 
@@ -271,6 +274,7 @@ define(['colt','mustache'], function (Colt,Mustache) {
 
         // Render to DOM
         document.getElementById(scope.mid).innerHTML = rendered;
+        document.getElementById(scope.mid).style.display = "block";
 
         // Build Event Listeners
         this.delegateEvents(scope.events, scope);
