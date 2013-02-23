@@ -295,15 +295,19 @@ define(function () {
          */
          
         access: function (module, callback) {
-            var _this = this;
+            var _this = this,
                 scope = this.scope[module];
             if (!scope.hasOwnProperty("loaded")) {
                 _this.loadDependencies(scope,function(scope) {
                     scope.loaded = true;
-                    callback(scope);
+                    if (callback && typeof callback === "function") {
+                        callback(scope);
+                    }
                 });
             }else{
-                callback(scope);
+                if (callback && typeof callback === "function") {
+                    callback(scope);
+                }
             }
         },
 
