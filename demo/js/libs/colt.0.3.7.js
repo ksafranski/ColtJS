@@ -294,14 +294,16 @@ define(function () {
          * @para  module   name of the module to access
          */
          
-        access: function (module) {
-            var scope = this.scope[module];
-            if (!this.scope[module].hasOwnProperty("loaded")) {
-                this.loadDependencies(scope,function(scope) {
-                    return scope;
+        access: function (module, callback) {
+            var _this = this;
+                scope = this.scope[module];
+            if (!scope.hasOwnProperty("loaded")) {
+                _this.loadDependencies(scope,function(scope) {
+                    scope.loaded = true;
+                    callback(scope);
                 });
             }else{
-                return scope;
+                callback(scope);
             }
         },
 
