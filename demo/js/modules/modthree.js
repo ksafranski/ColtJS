@@ -3,7 +3,8 @@ define(function(){
     var modthree = {
         
         dependencies: {
-            'notification': 'utils/notification'
+            'notification': 'utils/notification',
+            'tester': 'utils/tester'
         },
         
         events: {

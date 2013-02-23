@@ -76,7 +76,9 @@ define(function () {
             for (var rule in module.validation_config.rules[name]) {
                 result = this.test(rule, value, module.validation_config.rules[name][rule], module);
                 if (!result) {
-                    pass = false;
+                    if(module.validation_config.rules[name].hasOwnProperty('required') && value!==''){
+                        pass = false;
+                    }
                     errors.push(rule);
                 }
             }

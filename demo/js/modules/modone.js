@@ -46,6 +46,14 @@ define(function(){
             // Render template
             Colt.render(this,data);
             
+            // Access other modules
+            
+            var header = Colt.access('header');
+            var modthree = Colt.access('modthree');
+            
+            console.log('Colt.access(header) = ', header);
+            console.log('Colt.access(modthree) = ',modthree);
+            
         },
         
         testEvent: function(){

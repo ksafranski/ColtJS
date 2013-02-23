@@ -27,7 +27,7 @@ define(function(){
                     maxlength: 32
                 },
                 email: {
-                    required: true,
+                    //required: true,
                     email: true
                 },
                 password: {
