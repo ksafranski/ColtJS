@@ -181,59 +181,9 @@ define(function () {
 
             var scope = this.scope[module],
                 _this = this;
-
-            /**
-             * Checks for & loads any dependencies before calling the route's function
-             * @param  scope          The module object to be used.
-             * @param  route_fn       The return function from the route.
-             */
-
-            function loadDependencies(scope, route_fn) {
-                var dep_name,
-                    dep_src,
-                    arr_dep_name = [],
-                    arr_dep_src = [];
-
-                // Load module's dependencies
-                if (scope.hasOwnProperty("dependencies")) {
-
-                    // Build Dependency Arrays
-                    for (var dep in scope.dependencies) {
-                        if (scope.dependencies.hasOwnProperty(dep)) {
-                            dep_name = dep;
-                            dep_src = scope.dependencies[dep];
-
-                            // Check if already loaded into global
-                            if (_this.dependencies.hasOwnProperty(dep_src)) {
-                                scope[dep_name] = _this.dependencies[dep_src];
-
-                            // Add to array to be pulled via Require
-                            } else {
-                                arr_dep_name.push(dep_name);
-                                arr_dep_src.push(dep_src);
-                            }
-                        }
-                    }
-
-                    // Load deps and add to object
-                    require(arr_dep_src, function () {
-                        for (var i = 0, max = arguments.length; i < max; i++) {
-                            scope[arr_dep_name[i]] = arguments[i];
-
-                            // Store in globally accessible dependencies object
-                            _this.dependencies[arr_dep_src[i]] = arguments[i];
-                        }
-                        // Fire function of route that called the processor
-                        scope[route_fn](url_data);
-                    });
-
-                // Module has no dependencies
-                } else {
-                    // Fire route's function
-                    scope[route_fn](url_data);
-                }
-            }
-
+                
+            // Set module to loaded
+            scope.loaded = true;
 
             // Check to see if we are using inline template or if template has already been loaded/defined
             if (!scope.hasOwnProperty("template")) {
@@ -241,14 +191,78 @@ define(function () {
                 this.AJAX("templates/" + scope.mid + ".tpl", function (data) {
                     if (data) {
                         scope.template = data;
-                        loadDependencies(scope, route_fn);
+                        _this.loadDependencies(scope,function(){
+                            // Run route after deps are loaded
+                            scope[route_fn](url_data);
+                        });
                     } else {
                         console.error("Error Loading " + scope.mid + ".tpl");
                     }
                 });
 
             } else {
-                loadDependencies(scope, route_fn);
+                _this.loadDependencies(scope,function(){
+                    // Run route after deps are loaded
+                    scope[route_fn](url_data);
+                });
+            }
+            
+        },
+        
+        /**
+         * Checks for & loads any dependencies before calling the route's function
+         * @param  scope          The module object to be used.
+         * @param  callback       Function to execute when all deps are loaded
+         */
+
+        loadDependencies: function(scope, callback) {
+            var _this = this,
+                dep_name,
+                dep_src,
+                arr_dep_name = [],
+                arr_dep_src = [];
+
+            // Load module's dependencies
+            if (scope.hasOwnProperty("dependencies")) {
+
+                // Build Dependency Arrays
+                for (var dep in scope.dependencies) {
+                    if (scope.dependencies.hasOwnProperty(dep)) {
+                        dep_name = dep;
+                        dep_src = scope.dependencies[dep];
+
+                        // Check if already loaded into global
+                        if (_this.dependencies.hasOwnProperty(dep_src)) {
+                            scope[dep_name] = _this.dependencies[dep_src];
+
+                        // Add to array to be pulled via Require
+                        } else {
+                            arr_dep_name.push(dep_name);
+                            arr_dep_src.push(dep_src);
+                        }
+                    }
+                }
+
+                // Load deps and add to object
+                require(arr_dep_src, function () {
+                    for (var i = 0, max = arguments.length; i < max; i++) {
+                        scope[arr_dep_name[i]] = arguments[i];
+
+                        // Store in globally accessible dependencies object
+                        _this.dependencies[arr_dep_src[i]] = arguments[i];
+                    }
+                    // Fire callback
+                    if ( callback && typeof callback === "function" ){
+                        callback(scope);
+                    }
+                });
+
+            // Module has no dependencies
+            } else {
+                // Fire callback
+                if ( callback && typeof callback === "function" ){
+                    callback(scope);
+                }
             }
         },
 
@@ -273,6 +287,28 @@ define(function () {
 
             // Build Event Listeners
             this.delegateEvents(scope.events, scope);
+        },
+        
+        /**
+         * Proxy function for accessing other modules and their dependencies
+         * @para  module   name of the module to access
+         */
+         
+        access: function (module, callback) {
+            var _this = this,
+                scope = this.scope[module];
+            if (!scope.hasOwnProperty("loaded")) {
+                _this.loadDependencies(scope,function(scope) {
+                    scope.loaded = true;
+                    if (callback && typeof callback === "function") {
+                        callback(scope);
+                    }
+                });
+            }else{
+                if (callback && typeof callback === "function") {
+                    callback(scope);
+                }
+            }
         },
 
         /**
