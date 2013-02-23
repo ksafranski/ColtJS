@@ -252,7 +252,7 @@ define(function () {
                         _this.dependencies[arr_dep_src[i]] = arguments[i];
                     }
                     // Fire callback
-                    if ( callback && typeof callback === 'function' ){
+                    if ( callback && typeof callback === "function" ){
                         callback(scope);
                     }
                 });
@@ -260,7 +260,7 @@ define(function () {
             // Module has no dependencies
             } else {
                 // Fire callback
-                if ( callback && typeof callback === 'function' ){
+                if ( callback && typeof callback === "function" ){
                     callback(scope);
                 }
             }
@@ -295,8 +295,7 @@ define(function () {
          */
          
         access: function (module) {
-            var _this = this,
-                scope = this.scope[module];
+            var scope = this.scope[module];
             if (!this.scope[module].hasOwnProperty("loaded")) {
                 this.loadDependencies(scope,function(scope) {
                     return scope;
