@@ -187,15 +187,18 @@ define(function () {
 
             // Check to see if we are using inline template or if template has already been loaded/defined
             if (!scope.hasOwnProperty("template")) {
-
-                this.AJAX("templates/" + scope.mid + ".tpl", function (data) {
-                    if (data) {
+                
+                this.ajax({
+                    url: "templates/" + scope.mid + ".tpl",
+                    type: "GET",
+                    success: function(data) {
                         scope.template = data;
                         _this.loadDependencies(scope,function(){
                             // Run route after deps are loaded
                             scope[route_fn](url_data);
                         });
-                    } else {
+                    },
+                    error: function(){
                         console.error("Error Loading " + scope.mid + ".tpl");
                     }
                 });
@@ -404,55 +407,164 @@ define(function () {
 
         /**
          * Used to make AJAX calls
-         * @param  url       The URL of the request
-         * @param  callback  Callback function
-         * @param  method    The method to be used
-         * @param  async     Fire request asynchronously
-         * @param  data      Data to be passed to request
+         * Arguments passed in as object:
+         *
+         * Ex: Colt.ajax({ ...params... });
+         *
+         * @param url     URL of the resource
+         * @param type    Type (method) of request
+         * @param cache   Boolean to cache request, default: true
+         * @param async   Boolean to use asynchronous, default: true
+         * @param data    Object containing key/value paired data
+         * @param success Function called on success
+         * @param error   Function called on error
          */
 
-        AJAX: function (url, callback, method, async, data) {
-            // Set variables
-            var request = false;
-                url = url || "";
-                method = method || "GET";
-                async = async || true;
-                data = data || null;
+        ajax: function() {
 
-            // Mozilla/Safari/Non-IE
+            /**
+             * Parent object for all parameters
+             */
+        
+            var xhr = {};
+        
+            /**
+             * Determine call structure
+             * ajax(url, { params }); or ajax({ params });
+             */
+        
+            if (arguments.length === 1) {
+                // All params passed as object
+                xhr = arguments[0];
+            } else {
+                // Populate xhr obj with second argument
+                xhr = arguments[1];
+                // Add first argument to xhr object as url
+                xhr.url = arguments[0];
+            }
+        
+        
+            /**
+             * Parameters & Defaults
+             */
+        
+            xhr.request = false;
+            xhr.type = xhr.type || "GET";
+            xhr.data = xhr.data || null;
+            if (xhr.cache || !xhr.hasOwnProperty("cache")) { xhr.cache = true; } else { xhr.cache = false; }
+            if (xhr.async || !xhr.hasOwnProperty("async")) { xhr.async = true; } else { xhr.async = false; }
+            if (xhr.success && typeof xhr.success === "function") { xhr.success = xhr.success; } else { xhr.success = false; }
+            if (xhr.error && typeof xhr.error === "function") { xhr.error = xhr.error; } else { xhr.error = false; }
+        
+            /**
+             * Format xhr.data & encode values
+             */
+        
+            if (xhr.data) {
+                var param_count = 0,
+                    name,
+                    value,
+                    tmp_data = xhr.data;
+                for (var param in tmp_data) {
+                    if(tmp_data.hasOwnProperty(param)){
+                        name = encodeURIComponent(param);
+                        value = encodeURIComponent(tmp_data[param]);
+                        if (param_count === 0) {
+                            xhr.data = name + "=" + value;
+                        } else {
+                            xhr.data += "&" + name + "=" + value;
+                        }
+                        param_count++;
+                    }
+                }
+                xhr.data = xhr.data;
+            }
+        
+            /**
+             * Appends data to URL
+             * @string  data  The data to append
+             */
+        
+            function formatURL(data) {
+                var url_split = xhr.url.split("?");
+                if (url_split.length !== 1) {
+                    xhr.url += "&" + data;
+                } else {
+                    xhr.url += "?" + data;
+                }
+            }
+        
+            /**
+             * Handle xhr.data on GET request type
+             */
+        
+            if (xhr.data && xhr.type.toUpperCase() === "GET") {
+                formatURL(xhr.data);
+            }
+        
+            /**
+             * Check cache parameter, set URL param
+             */
+        
+            if (!xhr.cache) {
+                formatURL(new Date().getTime());
+            }
+        
+            /**
+             * Establish request
+             */
+        
             if (window.XMLHttpRequest) {
-                request = new XMLHttpRequest();
+                // Modern non-IE
+                xhr.request = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                // Internet Explorer
+                xhr.request = new ActiveXObject("Microsoft.XMLHTTP");
+            } else {
+                // No request object, break
+                return false;
             }
-            // IE
-            else if (window.ActiveXObject) {
-                request = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            // If AJAX supported
-            if (request !== false) {
-                // Open Http Request connection
-                if (method == "GET") {
-                    url = url;
-                    data = null;
-                }
-                request.open(method, url, async);
-                // Set request header (optional if GET method is used)
-                if (method === "POST") {
-                    request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-                }
-                // Assign (or define) response-handler/callback when ReadyState is changed.
-                request.onreadystatechange = function () {
-                    if (request.readyState === 4) {
-                        if (typeof callback === "function") {
-                            callback(request.responseText);
+        
+            /**
+             * Monitor ReadyState
+             */
+        
+            xhr.request.onreadystatechange = function () {
+                if (xhr.request.readyState === 4) {
+                    if (xhr.request.status === 200) {
+                        if (xhr.success) {
+                            // Returns responseText and request object
+                            xhr.success(xhr.request.responseText, xhr.request);
+                        }
+                    } else {
+                        if (xhr.error) {
+                            // Returns request object
+                            xhr.error(xhr.request);
                         }
                     }
-                };
-                // Send data
-                request.send(data);
-
-            } else {
-                alert("Please use a browser with AJAX support!");
+                }
+            };
+        
+            /**
+             * Open Http Request connection
+             */
+        
+            xhr.request.open(xhr.type, xhr.url, xhr.async);
+        
+            /**
+             * Set request header for POST
+             */
+        
+            if (xhr.type.toUpperCase() === "POST") {
+                xhr.request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             }
+        
+            /**
+             * Send data
+             */
+        
+            xhr.request.send(xhr.data);
+        
         },
 
         /**
