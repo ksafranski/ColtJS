@@ -59,9 +59,18 @@
     plug into the system and are only called when and if they are needed.
 </p>
 
-<p>The framework includes methods for handling <a href="#routing">routing &amp; navigation</a>, <a href="#templates">templates</a>, 
-<a href="#passing-data">url parsing</a>, <a href="#events">event binding</a>, <a href="#utils-dependencies">utilities &amp; dependencies</a>, <a href="#access">cross-module access</a>, 
-<a href="#persistent-storage">persistent storage</a> and <a href="#pub-sub">pub/sub</a> as well as other core system functions.</p>
+<p>Beyond the basic structuring and handling of module, the framework includes methods for handling the following:
+<ul>
+    <li><a href="#routing">Routing &amp; navigation</a></li>
+    <li><a href="#templates">Templates</a></li>
+    <li><a href="#passing-data">URL parsing</a></li>
+    <li><a href="#ajax">AJAX</a></li>
+    <li><a href="#events">Event binding</a></li>
+    <li><a href="#utils-dependencies">Utilities &amp; dependencies</a></li>
+    <li><a href="#access">Cross-module access</a></li>
+    <li><a href="#persistent-storage">Persistent storage</a></li>
+    <li><a href="#pub-sub">Pub/Sub</a></li>
+</ul>
 
 <p>The current version supports all modern browsers (including IE8 and above) but can easily be adapted to work with older browsers if needed.</p>
 
@@ -256,6 +265,42 @@ the module.</p>
 
 <p>So, for a click event you could specify <code>'click .something': 'doSomething'</code> which would fire the <code>doSomething</code> method and would return 
 the event.</p>
+
+<h3>Manual Binding</h3>
+
+<p>Colt also includes a method for manually binding events:</p>
+
+<pre><code data-language="javascript">Colt.bindEvent({dom_object}, {event}, function () {
+    ... Code to Execute ...
+});
+</code></pre>
+
+<a name="ajax"></a>
+<hr>
+<h2>AJAX Requests</h2>
+
+<p>Colt includes a function to handle AJAX calls which is used by the core but can also be called manually:</p>
+
+<pre><code data-language="javascript">Colt.ajax({
+    url: 'path/to/resource',
+    type: 'GET',
+    async: true,
+    cache: true,
+    data: { foo: 'bar', baz: 'qux' },
+    success: function(data, request){
+        ...actions on success...
+    },
+    error: function(request){
+        ...actions on error...
+    }
+});    
+</code></pre>
+
+<p>The only required property is <code>url</code>, which can also be submitted singularily in a similar method to jQuery's <code>$.ajax()</code> method. So, for instance both of the following would work:</p>
+
+<pre><code data-language="javascript">Colt.ajax('path/to/resource');</code></pre>
+
+<pre><code data-language="javascript">Colt.ajax({ url: 'path/to/resource' });</code></pre>
 
 <a name="templates"></a>
 <hr>
