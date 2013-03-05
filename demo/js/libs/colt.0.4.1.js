@@ -307,7 +307,7 @@ define(function () {
                         callback(scope);
                     }
                 });
-            }else{
+            } else {
                 if (callback && typeof callback === "function") {
                     callback(scope);
                 }
