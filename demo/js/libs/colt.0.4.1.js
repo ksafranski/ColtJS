@@ -20,33 +20,36 @@
  */
 
 
-/**
- * Colt Framework
- * @return {object}
- */
+
 define(function () {
 
     /**
-     * The main file in the framework.
-     * This is where the router, dependencies and event delegation happens.
+     * The main Colt object
      * @type {Object}
      */
-
     var Colt = {
 
-        // Will auto-populate all routes
+        /**
+         * Container for all routes
+         * @type {Object}
+         */
         routes: {},
 
-        // Will auto-populate all module objects
+        /**
+         * Container for all module objects
+         * @type {Object}
+         */
         scope: {},
 
-        // Will auto-populate dependencies
+        /**
+         * Conatiner for all dependencies
+         * @type {Object}
+         */
         dependencies: {},
 
         /**
          * Adds module to object and then initiates routes
          */
-
         init: function () {
 
             var module,
@@ -86,7 +89,6 @@ define(function () {
         /**
          * Setup Routing Table, Bind and Load Routes
          */
-
         router: function () {
 
             var cur_route = window.location.hash,
@@ -116,9 +118,8 @@ define(function () {
 
         /**
          * Checks to see that a current route matches a modules's route and hides all of those that don't need to be rendered
-         * @param  {string} fragment the current hash
+         * @param {String} fragment The current hash
          */
-
         loadUrl: function (fragment) {
             var el_lock,
                 module_name,
@@ -173,10 +174,9 @@ define(function () {
 
         /**
          * Handles compilation of the module, loads template, fires dependency loader and event handler
-         * @param  module         The module object to be used.
-         * @param  route_fn       The return function from the route.
+         * @param {Object} module The module object to be used.
+         * @function route_fn The return function from the route.
          */
-
         processor: function (module, route_fn, url_data) {
 
             var scope = this.scope[module],
@@ -214,10 +214,9 @@ define(function () {
         
         /**
          * Checks for & loads any dependencies before calling the route's function
-         * @param  scope          The module object to be used.
-         * @param  callback       Function to execute when all deps are loaded
+         * @param {Object} scope The module object to be used.
+         * @function callback Function to execute when all deps are loaded
          */
-
         loadDependencies: function(scope, callback) {
             var _this = this,
                 dep_name,
@@ -271,10 +270,9 @@ define(function () {
 
         /**
          * Renders a module's template onto the screen
-         * @param  scope    the module object to be used.
-         * @param  data     any data to be rendered onto the template.
+         * @param {Object} scope The module object to be used.
+         * @param {Object} [data] Any data to be rendered onto the template.
          */
-
         render: function (scope, data) {
             var template = scope.template,
                 // Get element
@@ -294,9 +292,9 @@ define(function () {
         
         /**
          * Proxy function for accessing other modules and their dependencies
-         * @para  module   name of the module to access
+         * @param {Object} module Name of the module to access
+         * @function callback The function to fire once access is complete
          */
-         
         access: function (module, callback) {
             var _this = this,
                 scope = this.scope[module];
@@ -316,10 +314,9 @@ define(function () {
 
         /**
          * Responsible for updating the history hash, and changing the URL
-         * @param  {string} fragment the location to be loaded
-         * @return {bool}
+         * @param  {String} fragment The location to be loaded
+         * @return {Boolean}
          */
-
         navigate: function (fragment) {
                 
             var location = window.location,
@@ -344,10 +341,9 @@ define(function () {
          * Using jQuery's on method, we can listen to the event_name on the
          * selector and call a specified method, passing in scope as event.data.scope
          *
-         * @param  {Object} events has of events to be watched for
-         * @param  {Object} scope the current module
+         * @param {Object} events Events to be watched for
+         * @param {Object} scope The current module
          */
-
         delegateEvents: function (events, scope) {
 
             var method,
@@ -384,12 +380,11 @@ define(function () {
 
         /**
          * Used to bind events
-         * @param  el     Element on which to attach event
-         * @param  evt    Event
-         * @param  fn     Function to be called
-         * @param  pdef   Bool to preventDefault
+         * @param {Object} el Element on which to attach event
+         * @param {String} evt Event
+         * @function fn Function to be called
+         * @param {Boolean} [pdef] Bool to preventDefault
          */
-
         bindEvent: function (el, evt, fn, pdef) {
             pdef = pdef || false;
             if (el.addEventListener) { // Modern browsers
@@ -407,32 +402,25 @@ define(function () {
 
         /**
          * Used to make AJAX calls
-         * Arguments passed in as object:
          *
-         * Ex: Colt.ajax({ ...params... });
+         * @param {String} url URL of the resource
+         * @param {String} type Type (method) of request
+         * @param {Boolean} cache Boolean to cache request, default: true
+         * @param {Boolean} async Boolean to use asynchronous, default: true
+         * @param {Object} data Object containing key/value paired data
+         * @function success Function called on success
+         * @function error Function called on error
          *
-         * @param url     URL of the resource
-         * @param type    Type (method) of request
-         * @param cache   Boolean to cache request, default: true
-         * @param async   Boolean to use asynchronous, default: true
-         * @param data    Object containing key/value paired data
-         * @param success Function called on success
-         * @param error   Function called on error
+         * @example
+         * Colt.ajax({ ...params... });
          */
 
         ajax: function() {
 
-            /**
-             * Parent object for all parameters
-             */
-        
+            // Parent object for all parameters
             var xhr = {};
         
-            /**
-             * Determine call structure
-             * ajax(url, { params }); or ajax({ params });
-             */
-        
+            // Determine call structure: ajax(url, { params }); or ajax({ params });
             if (arguments.length === 1) {
                 // All params passed as object
                 xhr = arguments[0];
@@ -444,10 +432,7 @@ define(function () {
             }
         
         
-            /**
-             * Parameters & Defaults
-             */
-        
+            // Parameters & Defaults
             xhr.request = false;
             xhr.type = xhr.type || "GET";
             xhr.data = xhr.data || null;
@@ -456,10 +441,7 @@ define(function () {
             if (xhr.success && typeof xhr.success === "function") { xhr.success = xhr.success; } else { xhr.success = false; }
             if (xhr.error && typeof xhr.error === "function") { xhr.error = xhr.error; } else { xhr.error = false; }
         
-            /**
-             * Format xhr.data & encode values
-             */
-        
+            // Format xhr.data & encode values
             if (xhr.data) {
                 var param_count = 0,
                     name,
@@ -480,11 +462,7 @@ define(function () {
                 xhr.data = xhr.data;
             }
         
-            /**
-             * Appends data to URL
-             * @string  data  The data to append
-             */
-        
+            // Appends data to URL
             function formatURL(data) {
                 var url_split = xhr.url.split("?");
                 if (url_split.length !== 1) {
@@ -494,26 +472,17 @@ define(function () {
                 }
             }
         
-            /**
-             * Handle xhr.data on GET request type
-             */
-        
+            // Handle xhr.data on GET request type
             if (xhr.data && xhr.type.toUpperCase() === "GET") {
                 formatURL(xhr.data);
             }
         
-            /**
-             * Check cache parameter, set URL param
-             */
-        
+            // Check cache parameter, set URL param
             if (!xhr.cache) {
                 formatURL(new Date().getTime());
             }
         
-            /**
-             * Establish request
-             */
-        
+            // Establish request
             if (window.XMLHttpRequest) {
                 // Modern non-IE
                 xhr.request = new XMLHttpRequest();
@@ -525,10 +494,7 @@ define(function () {
                 return false;
             }
         
-            /**
-             * Monitor ReadyState
-             */
-        
+            // Monitor ReadyState
             xhr.request.onreadystatechange = function () {
                 if (xhr.request.readyState === 4) {
                     if (xhr.request.status === 200) {
@@ -545,34 +511,24 @@ define(function () {
                 }
             };
         
-            /**
-             * Open Http Request connection
-             */
-        
+            // Open Http Request connection
             xhr.request.open(xhr.type, xhr.url, xhr.async);
         
-            /**
-             * Set request header for POST
-             */
-        
+            // Set request header for POST
             if (xhr.type.toUpperCase() === "POST") {
                 xhr.request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             }
         
-            /**
-             * Send data
-             */
-        
+            // Send data
             xhr.request.send(xhr.data);
         
         },
 
         /**
          * LocalStorage with polyfill support via cookies
-         * @param  key       The key or identifier for the store
-         * @param  value     Contents of the store
+         * @param {String} key The key or identifier for the store
+         * @param {String|Object} [value] Contents of the store
          */
-
         store: function (key, value) {
 
             var lsSupport = false;
@@ -613,11 +569,10 @@ define(function () {
 
             /**
              * Creates new cookie or removes cookie with negative expiration
-             * @param  key       The key or identifier for the store
-             * @param  value     Contents of the store
-             * @param  exp       Expiration - creation defaults to 30 days
+             * @param {String} key The key or identifier for the store
+             * @param {String} value Contents of the store
+             * @param {Number} exp Expiration - creation defaults to 30 days
              */
-
             function createCookie(key, value, exp) {
                 var date = new Date(),
                     expires;
@@ -628,9 +583,8 @@ define(function () {
 
             /**
              * Returns contents of cookie
-             * @param  key       The key or identifier for the store
+             * @param {String} key The key or identifier for the store
              */
-
             function readCookie(key) {
                 var nameEQ = key + "=",
                     ca = document.cookie.split(";");
@@ -644,18 +598,21 @@ define(function () {
 
         },
 
-        // Placeholder object for pub/sub
+        /**
+         * Placeholder object for pub/sub
+         */
         topics: {},
 
-        // ID for incrementing
+        /**
+         * ID for incrementing
+         */
         topic_id: 0,
 
         /**
          * Publish to a topic
-         * @param  topic     Topic of the subscription
-         * @param  args      Array of arguments passed
+         * @param {String} topic Topic of the subscription
+         * @param {Object} args Array of arguments passed
          */
-
         publish: function (topic, args) {
             var _this = this;
             if (!this.topics.hasOwnProperty(topic)) {
@@ -680,10 +637,9 @@ define(function () {
 
         /**
          * Subscribes to a topic
-         * @param  topic     Topic of the subscription
-         * @param  args      Function to be called
+         * @param {String} topic Topic of the subscription
+         * @function fn Function to be called
          */
-
         subscribe: function (topic, fn) {
             var id = ++this.topic_id;
             if (!this.topics[topic]) {
@@ -698,9 +654,8 @@ define(function () {
 
         /**
          * Unsubscribes from a topic
-         * @param  token    Token of the subscription
+         * @param {String} token Token of the subscription
          */
-
         unsubscribe: function (token) {
             for (var topic in this.topics) {
                 if (this.topics.hasOwnProperty(topic)) {
