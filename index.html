@@ -62,7 +62,7 @@
 <p>Beyond the basic structuring and handling of module, the framework includes methods for handling the following:
 <ul>
     <li><a href="#routing">Routing &amp; navigation</a></li>
-    <li><a href="#templates">Templates</a></li>
+    <li><a href="#templates">Templates &amp; rendering</a></li>
     <li><a href="#passing-data">URL parsing</a></li>
     <li><a href="#ajax">AJAX</a></li>
     <li><a href="#events">Event binding</a></li>
@@ -304,7 +304,7 @@ the event.</p>
 
 <a name="templates"></a>
 <hr>
-<h2>Templates</h2>
+<h2>Templates &amp; Rendering</h2>
 
 <p>Templates should be placed in the <code>/templates</code> directory and given the same file name as the module and use the <code>.tpl</code> extension.</p>
 
@@ -343,6 +343,37 @@ define(['colt','mustache'], function (Colt,Mustache) {
 
         // Build Event Listeners
         this.delegateEvents(scope.events, scope);
+    };
+
+    // Initialize application 
+    Colt.init(); 
+
+});
+</code></pre>
+
+<p>Colt also has an <code>unrender</code> method which is used to remove unused modules. If, for instance, custom transitions were being used this could be modified similar to the above Mustache example to 
+    act on the module during this process:
+</p>
+
+<pre><code data-language="javascript">require.config({
+    baseUrl: "js/",
+    paths: {
+        colt:       'libs/colt',
+        mustache:   'libs/jquery'
+    }
+});
+
+define(['colt','jquery'], function (Colt,$) {
+
+    // Define all of the modules
+    Colt.modules = [
+        'modules/module_name',
+        ...additional modules...
+    ];
+
+    // Define custom unrender to use transition out
+    Colt.unrender = function (module_name) {
+        $('#'+module_name).fadeOut(300);
     };
 
     // Initialize application 
