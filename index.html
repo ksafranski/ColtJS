@@ -370,8 +370,23 @@ define(['colt','jquery'], function (Colt,$) {
         'modules/module_name',
         ...additional modules...
     ];
+    
+    // Define custom render to use transition in...
+    Colt.render = function (scope, data) {
+        var template = scope.template,
+            // Replace any mustache-style {{VAR}}'s
+            rendered = template.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
+                return data[match];
+            });
 
-    // Define custom unrender to use transition out
+        // Render to DOM & Show Element
+        $('#'+scope.mid).fadeIn(300);
+
+        // Build Event Listeners
+        this.delegateEvents(scope.events, scope);
+    }
+
+    // Define custom unrender to use transition out...
     Colt.unrender = function (module_name) {
         $('#'+module_name).fadeOut(300);
     };
