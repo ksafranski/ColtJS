@@ -374,10 +374,10 @@ define(['colt','jquery'], function (Colt,$) {
     // Define custom render to use transition in...
     Colt.render = function (scope, data) {
         var template = scope.template,
-            // Replace any mustache-style {{VAR}}'s
-            rendered = template.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
-                return data[match];
-            });
+        // Replace any mustache-style {{VAR}}'s
+        rendered = template.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
+            return data[match];
+        });
 
         // Render to DOM & Show Element
         $('#'+scope.mid).fadeIn(300);
