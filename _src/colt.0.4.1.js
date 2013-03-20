@@ -163,8 +163,7 @@ define(function () {
 
                         } else {
                             // Clear & Hide sections that don't exist in current route
-                            document.getElementById(module_name).innerHTML = "";
-                            document.getElementById(module_name).style.display = "none";
+                            this.unrender(module_name);
                         }
                     }
                 }
@@ -288,6 +287,15 @@ define(function () {
 
             // Build Event Listeners
             this.delegateEvents(scope.events, scope);
+        },
+        
+        /**
+         * Removes unused modules' content from DOM and sets display = none
+         * @param {String} module_name - The name of the module to unrender
+         */
+        unrender: function(module_name){
+            document.getElementById(module_name).innerHTML = "";
+            document.getElementById(module_name).style.display = "none";
         },
         
         /**
