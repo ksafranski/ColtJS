@@ -13,6 +13,7 @@ loadUrl(fragment)
 Checks to verify that current route matches a module's route, passes it to the processor() and hides all modules that don't need to be rendered
 
 
+
 **Parameters**
 
 **fragment**:  *String*,  The current hash
@@ -20,6 +21,7 @@ Checks to verify that current route matches a module's route, passes it to the p
 processor(module, route_fn, url_data)
 -------------------------------------
 Handles processing of the module, loads template, fires dependency loader then the route event
+
 
 
 **Parameters**
@@ -35,6 +37,7 @@ loadDependencies(scope, callback)
 Checks for & loads any dependencies before calling the route's function
 
 
+
 **Parameters**
 
 **scope**:  *Object*,  The module object to be used.
@@ -44,6 +47,7 @@ Checks for & loads any dependencies before calling the route's function
 render(scope, \[data\])
 -----------------------
 Renders a module's template onto the screen
+
 
 
 **Parameters**
@@ -57,6 +61,7 @@ unrender(module_name)
 Removes unused modules' content from DOM and sets display to none
 
 
+
 **Parameters**
 
 **module_name**:  *String*,  The name of the module to unrender
@@ -64,6 +69,7 @@ Removes unused modules' content from DOM and sets display to none
 access(module, callback)
 ------------------------
 Proxy function for accessing other modules and their dependencies
+
 
 
 **Parameters**
@@ -75,6 +81,7 @@ Proxy function for accessing other modules and their dependencies
 navigate(fragment)
 ------------------
 Responsible for updating the history hash, and changing the URL
+
 
 
 **Parameters**
@@ -96,6 +103,7 @@ Binds callbacks for a module's events object
 bindEvent(el, evt, fn, \[pdef\])
 --------------------------------
 Used to bind events to DOM objects
+
 
 
 **Parameters**
@@ -140,6 +148,7 @@ store(key, \[value\])
 ---------------------
 LocalStorage with polyfill support via cookies
 
+
 Specify a string/object value to `set`, none to `get`, and 'null' to `clear`
 
 
@@ -152,6 +161,7 @@ Specify a string/object value to `set`, none to `get`, and 'null' to `clear`
 createCookie(key, value, exp)
 -----------------------------
 Creates new cookie or removes cookie with negative expiration
+
 
 
 **Parameters**
@@ -167,6 +177,7 @@ readCookie(key)
 Returns contents of cookie
 
 
+
 **Parameters**
 
 **key**:  *String*,  The key or identifier for the store
@@ -180,6 +191,7 @@ publish(topic, args)
 Publish to a topic
 
 
+
 **Parameters**
 
 **topic**:  *String*,  Topic of the subscription
@@ -191,6 +203,7 @@ subscribe(topic, fn)
 Subscribes to a topic
 
 
+
 **Parameters**
 
 **topic**:  *String*,  Topic of the subscription
@@ -200,6 +213,7 @@ Subscribes to a topic
 unsubscribe(token)
 ------------------
 Unsubscribes from a topic
+
 
 
 **Parameters**

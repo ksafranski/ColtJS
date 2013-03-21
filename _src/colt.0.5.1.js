@@ -48,6 +48,8 @@ define(function () {
         dependencies: {},
 
         /**
+         * @method init
+         * 
          * Adds module to Colt object, sets up core properties and initializes router
          */
         init: function () {
@@ -87,6 +89,8 @@ define(function () {
         },
 
         /**
+         * @method router
+         * 
          * Sets up Routing Table, binds and loads Routes
          */
         router: function () {
@@ -117,7 +121,10 @@ define(function () {
         },
 
         /**
+         * @method loadUrl
+         * 
          * Checks to verify that current route matches a module's route, passes it to the processor() and hides all modules that don't need to be rendered
+         * 
          * @param {String} fragment The current hash
          */
         loadUrl: function (fragment) {
@@ -172,7 +179,10 @@ define(function () {
         },
 
         /**
+         * @method processor
+         * 
          * Handles processing of the module, loads template, fires dependency loader then the route event
+         * 
          * @param {Object} module The module object to be used.
          * @param {Function} route_fn The return function from the route.
          * @param {Object} url_data The data from any url query strings
@@ -213,7 +223,10 @@ define(function () {
         },
         
         /**
+         * @method loadDependencies
+         * 
          * Checks for & loads any dependencies before calling the route's function
+         * 
          * @param {Object} scope The module object to be used.
          * @param {Function} callback Function to execute when all deps are loaded
          */
@@ -269,7 +282,10 @@ define(function () {
         },
 
         /**
+         * @method render
+         * 
          * Renders a module's template onto the screen
+         * 
          * @param {Object} scope The module object to be used.
          * @param {Object} [data] Any data to be rendered onto the template.
          */
@@ -291,7 +307,10 @@ define(function () {
         },
         
         /**
+         * @method unrender
+         * 
          * Removes unused modules' content from DOM and sets display to none
+         * 
          * @param {String} module_name The name of the module to unrender
          */
         unrender: function(module_name){
@@ -300,7 +319,10 @@ define(function () {
         },
         
         /**
+         * @method access
+         * 
          * Proxy function for accessing other modules and their dependencies
+         * 
          * @param {Object} module Name of the module to access
          * @param {Function} callback The function to fire once access is complete
          */
@@ -324,7 +346,10 @@ define(function () {
         },
 
         /**
+         * @method navigate
+         * 
          * Responsible for updating the history hash, and changing the URL
+         * 
          * @param  {String} fragment The location to be loaded
          * @return {Boolean}
          */
@@ -348,8 +373,10 @@ define(function () {
         },
 
         /**
+         * @method delegateEvents
+         * 
          * Binds callbacks for a module's events object
-         *
+         * 
          * @param {Object} events Events to be watched for
          * @param {Object} scope The current module
          */
@@ -388,7 +415,10 @@ define(function () {
         },
 
         /**
+         * @method bindEvent
+         * 
          * Used to bind events to DOM objects
+         * 
          * @param {Object} el Element on which to attach event
          * @param {String} evt Event name
          * @param {Function} fn Function to be called
@@ -410,6 +440,8 @@ define(function () {
         },
 
         /**
+         * @method ajaz
+         * 
          * Used to make AJAX calls
          *
          * @param {String} url URL of the resource
@@ -542,7 +574,10 @@ define(function () {
         },
 
         /**
+         * @method store
+         * 
          * LocalStorage with polyfill support via cookies
+         * 
          * @param {String} key The key or identifier for the store
          * @param {String|Object} [value] Contents of the store, blank to return, 'null' to clear
          * 
@@ -587,7 +622,10 @@ define(function () {
         },
         
         /**
+         * @method createCookie
+         * 
          * Creates new cookie or removes cookie with negative expiration
+         * 
          * @param {String} key The key or identifier for the store
          * @param {String} value Contents of the store
          * @param {Number} exp Expiration in days
@@ -602,6 +640,7 @@ define(function () {
         
         /**
          * Returns contents of cookie
+         * 
          * @param {String} key The key or identifier for the store
          * @return {String} the value of the cookie
          */
@@ -627,7 +666,10 @@ define(function () {
         topic_id: 0,
 
         /**
+         * @method publish
+         * 
          * Publish to a topic
+         * 
          * @param {String} topic Topic of the subscription
          * @param {Object} args Array of arguments passed
          */
@@ -654,7 +696,10 @@ define(function () {
         },
 
         /**
+         * @method subscribe
+         * 
          * Subscribes to a topic
+         * 
          * @param {String} topic Topic of the subscription
          * @param {Function} fn Function to be called
          */
@@ -671,7 +716,10 @@ define(function () {
         },
 
         /**
+         * @method unsubscribe
+         * 
          * Unsubscribes from a topic
+         * 
          * @param {String} token Token of the subscription
          */
         unsubscribe: function (token) {
@@ -689,6 +737,8 @@ define(function () {
         },
 
         /**
+         * @method polyfill_bind
+         * 
          * Polyfill for .bind()
          */
         polyfill_bind: function () {
