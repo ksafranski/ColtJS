@@ -1,6 +1,7 @@
 {
   "name": "ColtJS",
   "version": "0.5.1",
+  "private": true,
   "description": "A simple, efficient, and modular JavaScript Framework.",
   "scripts": {},
   "repository": {
