@@ -1,0 +1,21 @@
+{
+  "name": "ColtJS",
+  "version": "0.5.1",
+  "description": "A simple, efficient, and modular JavaScript Framework.",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Fluidbyte/ColtJS.git"
+  },
+  "bugs": {
+      "url": "https://github.com/Fluidbyte/ColtJS/issues"
+  },
+  "author": "Kent Safranski <kent@fluidbyte.net> (http://fluidbyte.net)",
+  "license": "MIT",
+  "homepage": "http://coltjs.com",
+  "gitHead": "67597f8013905b7ab8773c0b68071eb5840a8353",
+  "readmeFilename": "README.md",
+  "contributors": [
+      "Luiz Lopes <luiz@wickeddeveloper.com> (http://wickeddeveloper.com)"
+  ]
+}
