@@ -6,7 +6,13 @@ components neccesary to begin working with the [ColtJS Framework](http://www.col
 You can download the source, or simply use the following `clone` to pull the boilerplate:
 
 ```
- git clone -b boilerplate https://github.com/Fluidbyte/ColtJS.git
+git clone -b boilerplate https://github.com/Fluidbyte/ColtJS.git
+```
+
+or directly into current folder:
+
+```
+git pull https://github.com/Fluidbyte/ColtJS.git boilerplate
 ```
 
 It includes the Colt source file both uncompressed and minimized, [RequireJS](http://www.requirejs.com), 
