@@ -48,7 +48,7 @@ define(function () {
         dependencies: {},
 
         /**
-         * Adds module to object and then initiates routes
+         * Adds module to Colt object, sets up core properties and initializes router
          */
         init: function () {
 
@@ -87,7 +87,7 @@ define(function () {
         },
 
         /**
-         * Setup Routing Table, Bind and Load Routes
+         * Sets up Routing Table, binds and loads Routes
          */
         router: function () {
 
@@ -117,8 +117,8 @@ define(function () {
         },
 
         /**
-         * Checks to see that a current route matches a modules's route and hides all of those that don't need to be rendered
-         * @param {String} fragment - The current hash
+         * Checks to verify that current route matches a module's route, passes it to the processor() and hides all modules that don't need to be rendered
+         * @param {String} fragment The current hash
          */
         loadUrl: function (fragment) {
             var el_lock,
@@ -172,9 +172,10 @@ define(function () {
         },
 
         /**
-         * Handles compilation of the module, loads template, fires dependency loader and event handler
-         * @param {Object} module - The module object to be used.
-         * @function route_fn - The return function from the route.
+         * Handles processing of the module, loads template, fires dependency loader then the route event
+         * @param {Object} module The module object to be used.
+         * @param {Function} route_fn The return function from the route.
+         * @param {Object} url_data The data from any url query strings
          */
         processor: function (module, route_fn, url_data) {
 
@@ -213,8 +214,8 @@ define(function () {
         
         /**
          * Checks for & loads any dependencies before calling the route's function
-         * @param {Object} scope - The module object to be used.
-         * @function callback - Function to execute when all deps are loaded
+         * @param {Object} scope The module object to be used.
+         * @param {Function} callback Function to execute when all deps are loaded
          */
         loadDependencies: function(scope, callback) {
             var _this = this,
@@ -269,8 +270,8 @@ define(function () {
 
         /**
          * Renders a module's template onto the screen
-         * @param {Object} scope - The module object to be used.
-         * @param {Object} [data] - Any data to be rendered onto the template.
+         * @param {Object} scope The module object to be used.
+         * @param {Object} [data] Any data to be rendered onto the template.
          */
         render: function (scope, data) {
             var template = scope.template,
@@ -290,8 +291,8 @@ define(function () {
         },
         
         /**
-         * Removes unused modules' content from DOM and sets display = none
-         * @param {String} module_name - The name of the module to unrender
+         * Removes unused modules' content from DOM and sets display to none
+         * @param {String} module_name The name of the module to unrender
          */
         unrender: function(module_name){
             document.getElementById(module_name).innerHTML = "";
@@ -300,13 +301,14 @@ define(function () {
         
         /**
          * Proxy function for accessing other modules and their dependencies
-         * @param {Object} module - Name of the module to access
-         * @function callback - The function to fire once access is complete
+         * @param {Object} module Name of the module to access
+         * @param {Function} callback The function to fire once access is complete
          */
         access: function (module, callback) {
             var _this = this,
                 scope = this.scope[module];
             if (!scope.hasOwnProperty("loaded")) {
+                // Not previously loaded, check for dependencies
                 _this.loadDependencies(scope,function(scope) {
                     scope.loaded = true;
                     if (callback && typeof callback === "function") {
@@ -314,6 +316,7 @@ define(function () {
                     }
                 });
             } else {
+                // Module previously loaded, fire callback
                 if (callback && typeof callback === "function") {
                     callback(scope);
                 }
@@ -322,7 +325,7 @@ define(function () {
 
         /**
          * Responsible for updating the history hash, and changing the URL
-         * @param  {String} fragment - The location to be loaded
+         * @param  {String} fragment The location to be loaded
          * @return {Boolean}
          */
         navigate: function (fragment) {
@@ -345,12 +348,10 @@ define(function () {
         },
 
         /**
-         * Set callback for a module's event list.
-         * Using jQuery's on method, we can listen to the event_name on the
-         * selector and call a specified method, passing in scope as event.data.scope
+         * Binds callbacks for a module's events object
          *
-         * @param {Object} events - Events to be watched for
-         * @param {Object} scope - The current module
+         * @param {Object} events Events to be watched for
+         * @param {Object} scope The current module
          */
         delegateEvents: function (events, scope) {
 
@@ -387,11 +388,11 @@ define(function () {
         },
 
         /**
-         * Used to bind events
-         * @param {Object} el - Element on which to attach event
-         * @param {String} evt - Event name
-         * @function fn - Function to be called
-         * @param {Boolean} [pdef] - Bool to preventDefault
+         * Used to bind events to DOM objects
+         * @param {Object} el Element on which to attach event
+         * @param {String} evt Event name
+         * @param {Function} fn Function to be called
+         * @param {Boolean} [pdef] Boolean to preventDefault
          */
         bindEvent: function (el, evt, fn, pdef) {
             pdef = pdef || false;
@@ -411,16 +412,24 @@ define(function () {
         /**
          * Used to make AJAX calls
          *
-         * @param {String} url - URL of the resource
-         * @param {String} [type] - Type (method) of request
-         * @param {Boolean} [cache] - Boolean to cache request, default: true
-         * @param {Boolean} [async] - Boolean to use asynchronous, default: true
-         * @param {Object} [data] - Object containing key/value paired data
-         * @function success - Function called on success
-         * @function error - Function called on error
-         *
-         * @example
-         * Colt.ajax({ ...params... });
+         * @param {String} url URL of the resource
+         * @param {Object} [config] Configuration object passed into request
+         * 
+         * **Configuration Object:**
+         * 
+         * `url`: URL of request if not specified as first argument
+         * 
+         * `type`: Request method, defaults to `GET`
+         * 
+         * `async`: Run request asynchronously, defaults to `TRUE`
+         * 
+         * `cache`: Cache the request, defaults to `TRUE`
+         * 
+         * `data`: Object or JSON data passed through request
+         * 
+         * `success`: Function called on successful request
+         * 
+         * `error`: Function called on failure of request
          */
 
         ajax: function() {
@@ -534,8 +543,10 @@ define(function () {
 
         /**
          * LocalStorage with polyfill support via cookies
-         * @param {String} key - The key or identifier for the store
-         * @param {String|Object} [value] - Contents of the store, blank to return, 'null' to clear
+         * @param {String} key The key or identifier for the store
+         * @param {String|Object} [value] Contents of the store, blank to return, 'null' to clear
+         * 
+         * Specify a string/object value to `set`, none to `get`, and 'null' to `clear`
          */
         store: function (key, value) {
 
@@ -551,7 +562,7 @@ define(function () {
                 if (lsSupport) { // Native support
                     localStorage.setItem(key, value);
                 } else { // Use Cookie
-                    createCookie(key, value, 30);
+                    this.createCookie(key, value, 30);
                 }
             }
 
@@ -560,7 +571,7 @@ define(function () {
                 if (lsSupport) { // Native support
                     return localStorage.getItem(key);
                 } else { // Use cookie
-                    return readCookie(key);
+                    return this.readCookie(key);
                 }
             }
 
@@ -569,41 +580,40 @@ define(function () {
                 if (lsSupport) { // Native support
                     localStorage.removeItem(key);
                 } else { // Use cookie
-                    createCookie(key, "", -1);
+                    this.createCookie(key, "", -1);
                 }
             }
 
-            // Polyfill functions using cookies
-
-            /**
-             * Creates new cookie or removes cookie with negative expiration
-             * @param {String} key - The key or identifier for the store
-             * @param {String} value - Contents of the store
-             * @param {Number} exp - Expiration - creation defaults to 30 days
-             */
-            function createCookie(key, value, exp) {
-                var date = new Date(),
-                    expires;
-                date.setTime(date.getTime() + (exp * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toGMTString();
-                document.cookie = key + "=" + value + expires + "; path=/";
+        },
+        
+        /**
+         * Creates new cookie or removes cookie with negative expiration
+         * @param {String} key The key or identifier for the store
+         * @param {String} value Contents of the store
+         * @param {Number} exp Expiration in days
+         */
+        createCookie: function(key, value, exp) {
+            var date = new Date(),
+                expires;
+            date.setTime(date.getTime() + (exp * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toGMTString();
+            document.cookie = key + "=" + value + expires + "; path=/";
+        },
+        
+        /**
+         * Returns contents of cookie
+         * @param {String} key The key or identifier for the store
+         * @return {String} the value of the cookie
+         */
+        readCookie: function(key) {
+            var nameEQ = key + "=",
+                ca = document.cookie.split(";");
+            for (var i = 0, max = ca.length; i < max; i++) {
+                var c = ca[i];
+                while (c.charAt(0) === " ") { c = c.substring(1, c.length); }
+                if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length); }
             }
-
-            /**
-             * Returns contents of cookie
-             * @param {String} key - The key or identifier for the store
-             */
-            function readCookie(key) {
-                var nameEQ = key + "=",
-                    ca = document.cookie.split(";");
-                for (var i = 0, max = ca.length; i < max; i++) {
-                    var c = ca[i];
-                    while (c.charAt(0) === " ") { c = c.substring(1, c.length); }
-                    if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length); }
-                }
-                return null;
-            }
-
+            return null;
         },
 
         /**
@@ -618,8 +628,8 @@ define(function () {
 
         /**
          * Publish to a topic
-         * @param {String} topic - Topic of the subscription
-         * @param {Object} args - Array of arguments passed
+         * @param {String} topic Topic of the subscription
+         * @param {Object} args Array of arguments passed
          */
         publish: function (topic, args) {
             var _this = this;
@@ -645,8 +655,8 @@ define(function () {
 
         /**
          * Subscribes to a topic
-         * @param {String} topic - Topic of the subscription
-         * @function fn - Function to be called
+         * @param {String} topic Topic of the subscription
+         * @param {Function} fn Function to be called
          */
         subscribe: function (topic, fn) {
             var id = ++this.topic_id;
@@ -662,7 +672,7 @@ define(function () {
 
         /**
          * Unsubscribes from a topic
-         * @param {String} token - Token of the subscription
+         * @param {String} token Token of the subscription
          */
         unsubscribe: function (token) {
             for (var topic in this.topics) {
