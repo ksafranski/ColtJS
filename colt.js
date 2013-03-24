@@ -1,4 +1,9 @@
 /**
+ * ColtJS Framework
+ *
+ * @version 0.5.1
+ * @license MIT-License <http://opensource.org/licenses/MIT>
+ *
  * Copyright (c) 2013 ColtJS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +25,9 @@
  */
 
 
-
+/**
+ * ColtJS Framework
+ */
 define(function () {
 
     /**
