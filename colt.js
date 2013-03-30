@@ -56,7 +56,7 @@ define(function () {
 
         /**
          * @method init
-         * 
+         *
          * Adds module to Colt object, sets up core properties and initializes router
          */
         init: function () {
@@ -97,7 +97,7 @@ define(function () {
 
         /**
          * @method router
-         * 
+         *
          * Sets up Routing Table, binds and loads Routes
          */
         router: function () {
@@ -129,25 +129,45 @@ define(function () {
 
         /**
          * @method loadUrl
-         * 
+         *
          * Checks to verify that current route matches a module's route, passes it to the processor() and hides all modules that don't need to be rendered
-         * 
+         *
          * @param {String} fragment The current hash
          */
         loadUrl: function (fragment) {
             var el_lock,
                 module_name,
+                querystring = false,
+                i, max,
                 url_data = {};
 
             // Break apart fragment
             fragment = fragment.replace("#!/", "");
-
-            // Check for URL Data (Query String)
+            
+            // Check for and remove trailing slash
+            if(fragment.substr(-1) == "/") {
+                fragment = fragment.substr(0, fragment.length - 1);
+            }
+            
+            // Split off any querystrings
             fragment = fragment.split("?");
             if (fragment[1]) {
-                var qs = fragment[1].split("&");
-                for (var i = 0, max = qs.length; i < max; i++) {
-                    var bits = qs[i].split("=");
+                querystring = fragment[1];
+            }
+            
+            // Check for URL Data - Slash delimited
+            fragment = fragment[0].split("/");
+            if(fragment.length > 0) {
+                for (i = 1, max = fragment.length; i<max; i++) {
+                    url_data[i-1] = fragment[i];
+                }
+            }
+            
+            // Add Querystring data to URL Data object
+            if (querystring) {
+                var qs_data = querystring.split("&");
+                for (i = 0, max = qs_data.length; i < max; i++) {
+                    var bits = qs_data[i].split("=");
                     url_data[bits[0]] = bits[1];
                 }
             }
@@ -187,9 +207,9 @@ define(function () {
 
         /**
          * @method processor
-         * 
+         *
          * Handles processing of the module, loads template, fires dependency loader then the route event
-         * 
+         *
          * @param {Object} module The module object to be used.
          * @param {Function} route_fn The return function from the route.
          * @param {Object} url_data The data from any url query strings
