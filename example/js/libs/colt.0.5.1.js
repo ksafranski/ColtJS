@@ -1,4 +1,9 @@
 /**
+ * ColtJS Framework
+ *
+ * @version 0.5.1
+ * @license MIT-License <http://opensource.org/licenses/MIT>
+ *
  * Copyright (c) 2013 ColtJS
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +25,9 @@
  */
 
 
-
+/**
+ * ColtJS Framework
+ */
 define(function () {
 
     /**
@@ -357,15 +364,25 @@ define(function () {
                 
             var location = window.location,
                 root = location.pathname.replace(/[^\/]$/, "$&"),
-                _this = this;
+                _this = this,
+                url;
+            
+            // Handle url composition
+            if(fragment.length) {
+                // Fragment exists
+                url = root + location.search + "#!/" + fragment;
+            } else {
+                // Null/Blank fragment, nav to root
+                url = root + location.search;
+            }
 
             if (history.pushState) {
                 // Browser supports pushState()
-                history.pushState(null,document.title, root + location.search + "#!/" + fragment);
+                history.pushState(null,document.title, url);
                 _this.loadUrl(fragment);
             } else {
                 // Older browser fallback
-                location.replace(root + location.search + "#!/" + fragment);
+                location.replace(root + url);
             }
 
             return true;
@@ -440,7 +457,7 @@ define(function () {
         },
 
         /**
-         * @method ajaz
+         * @method ajax
          * 
          * Used to make AJAX calls
          *

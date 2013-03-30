@@ -364,15 +364,25 @@ define(function () {
                 
             var location = window.location,
                 root = location.pathname.replace(/[^\/]$/, "$&"),
-                _this = this;
+                _this = this,
+                url;
+            
+            // Handle url composition
+            if(fragment.length) {
+                // Fragment exists
+                url = root + location.search + "#!/" + fragment;
+            } else {
+                // Null/Blank fragment, nav to root
+                url = root + location.search;
+            }
 
             if (history.pushState) {
                 // Browser supports pushState()
-                history.pushState(null,document.title, root + location.search + "#!/" + fragment);
+                history.pushState(null,document.title, url);
                 _this.loadUrl(fragment);
             } else {
                 // Older browser fallback
-                location.replace(root + location.search + "#!/" + fragment);
+                location.replace(root + url);
             }
 
             return true;
@@ -447,7 +457,7 @@ define(function () {
         },
 
         /**
-         * @method ajaz
+         * @method ajax
          * 
          * Used to make AJAX calls
          *
