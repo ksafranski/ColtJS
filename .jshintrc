@@ -4,7 +4,7 @@
     "newcap": false,
     "quotmark": "double",
     "regexdash": true,
-    "trailing": true,
+    "trailing": false,
     "undef": true,
     "unused": true,
     "maxerr": 100,
