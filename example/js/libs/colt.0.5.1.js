@@ -540,12 +540,12 @@ define(function () {
                 
             },
             
-            save: function(url, model) {
-                // Fires XHR only to save to endpoint
+            put: function(url, model) {
+                // Fires XHR only to save to endpoint (SAVE)
             },
             
-            update: function(url, model) {
-                // Fires XHR only to save to endpoint 
+            post: function(url, model) {
+                // Fires XHR only to save to endpoint (UPDATE)
             },
             
             delete: function(url, model) {
