@@ -631,6 +631,11 @@ define(function () {
 
             // If value is detected, set new or modify store
             if (typeof value !== "undefined" && value !== null) {
+                // Stringify objects
+                if(typeof value === 'object') {
+                    value = JSON.stringify(value);
+                }
+                // Add to / modify storage
                 if (lsSupport) { // Native support
                     localStorage.setItem(key, value);
                 } else { // Use Cookie
