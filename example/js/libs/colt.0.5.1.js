@@ -53,6 +53,12 @@ define(function () {
          * @type {Object}
          */
         dependencies: {},
+        
+        /**
+         * Container for all models
+         * @type {Object}
+         */
+        models: {},
 
         /**
          * @method init
@@ -474,6 +480,64 @@ define(function () {
                     fn(event);
                 });
             }
+        },
+        
+        /**
+         * @method model
+         * 
+         * Used to create, modify, return, and delete a model
+         * 
+         * @param {String} name The name of the model
+         * @param {Object} data The model data
+         */
+        model: function (name, data){
+            
+            // Add or modify model
+            if (typeof data !== "undefined" && data !== null) {
+                this.models[name] = data;
+            }
+
+            // No value supplied, return model data
+            if (typeof data === "undefined") {
+                // Check that model exists
+                if (this.models.hasOwnProperty(name)) {
+                    // Return model
+                    return this.models[name];
+                } else {
+                    // DNE, return false
+                    return false;
+                }
+            }
+
+            // Null specified, remove model
+            if (data === null) {
+                // Check that model exists
+                if (this.models.hasOwnProperty(name)) {
+                    // Delete model
+                    delete this.models[name];
+                } 
+            }
+            
+        },
+        
+        sync: {
+            
+            get: function(url, model) {
+                // Fires XHR then on success will fire this.model(name,{returned_data}) to set
+            },
+            
+            save: function(url, model) {
+                // Fires XHR only to save to endpoint
+            },
+            
+            update: function(url, model) {
+                // Fires XHR only to save to endpoint 
+            },
+            
+            delete: function(url, model) {
+                // Fires XHR, modifies endpoint, then fire this.model(name, null) to remove
+            }
+            
         },
 
         /**
