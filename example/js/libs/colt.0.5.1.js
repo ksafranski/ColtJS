@@ -523,7 +523,21 @@ define(function () {
         sync: {
             
             get: function(url, model) {
+                var _this = this;
+                
                 // Fires XHR then on success will fire this.model(name,{returned_data}) to set
+                
+                this.ajax({
+                    url: url,
+                    success: function(data) {
+                        // Set the model
+                        _this.model(model,data);
+                    },
+                    error: function(){
+                        console.error('Endpoint access failed');
+                    }
+                });
+                
             },
             
             save: function(url, model) {
