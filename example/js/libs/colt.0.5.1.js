@@ -524,8 +524,14 @@ define(function () {
 
         },
         
+        parseURL: function (url, data) {
+            return url.replace(/\{([^}]+)\}/g, function (i, match) {
+                return data[match];
+            });
+        },
+        
         sync: function (name, method){
-            var url = this.models[name].url,
+            var url = this.parseURL(this.models[name].url, this.models[name].data),
                 data = this.models[name].data,
                 syncParams = {
                     url: url,
