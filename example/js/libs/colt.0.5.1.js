@@ -483,75 +483,83 @@ define(function () {
         },
         
         /**
-         * @method model
+         * @method Model
          * 
-         * Used to create, modify, return, and delete a model
+         * Allows for local API model create, read, and delete
          * 
          * @param {String} name The name of the model
-         * @param {Object} data The model data
+         * @param {Object} [data] Contents of the model, blank to return, 'null' to clear
+         * 
+         * Specify a object value to `set`, none to `get`, and 'null' to `clear`
          */
-        model: function (name, data){
+        model: function (name, data, url) {
             
-            // Add or modify model
+            url = url || false;
+            
+            // If value is detected, set new or modify store
             if (typeof data !== "undefined" && data !== null) {
-                this.models[name] = data;
-            }
-
-            // No value supplied, return model data
-            if (typeof data === "undefined") {
-                // Check that model exists
-                if (this.models.hasOwnProperty(name)) {
-                    // Return model
-                    return this.models[name];
-                } else {
-                    // DNE, return false
-                    return false;
+                
+                // Create model object
+                this.models[name] = {
+                    data: data,
+                    save: this.saveModel.bind(this,name),
+                    get: this.getModel.bind(this,name)
+                };
+                
+                // If URL of endpoint supplied, set property
+                if(url){
+                    this.models[name].url = url;
                 }
             }
 
-            // Null specified, remove model
-            if (data === null) {
-                // Check that model exists
-                if (this.models.hasOwnProperty(name)) {
-                    // Delete model
-                    delete this.models[name];
-                } 
+            // No value supplied, return value
+            if (typeof data === "undefined") {
+                return this.models[name];
             }
-            
+
+            // Null specified, delete model
+            if (data === null) {
+                delete this.models[name];
+            }
+
         },
         
-        sync: {
-            
-            get: function(url, model) {
-                var _this = this;
-                
-                // Fires XHR then on success will fire this.model(name,{returned_data}) to set
-                
-                this.ajax({
+        saveModel: function (name) {
+            var url = this.models[name].url,
+                data = this.models[name].data,
+                syncParams = {
                     url: url,
-                    success: function(data) {
-                        // Set the model
-                        _this.model(model,data);
+                    type: 'POST',
+                    data: data,
+                    success: function(){
+                        console.log('SAVED');
                     },
                     error: function(){
-                        console.error('Endpoint access failed');
+                        console.log('ERROR');
                     }
-                });
+                };
                 
-            },
-            
-            put: function(url, model) {
-                // Fires XHR only to save to endpoint (SAVE)
-            },
-            
-            post: function(url, model) {
-                // Fires XHR only to save to endpoint (UPDATE)
-            },
-            
-            delete: function(url, model) {
-                // Fires XHR, modifies endpoint, then fire this.model(name, null) to remove
-            }
-            
+            // Call the ajax function
+            this.ajax(syncParams);
+        },
+        
+        getModel: function () {
+            var url = this.models[name].url,
+                data = this.models[name].data,
+                syncParams = {
+                    url: url,
+                    type: 'GET',
+                    data: data,
+                    success: function(){
+                        console.log('SAVED');
+                    },
+                    error: function(){
+                        console.log('ERROR');
+                    }
+                };
+                
+            // Call the ajax function
+            this.ajax(syncParams);
         },
 
         /**
