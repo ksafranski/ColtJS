@@ -502,8 +502,8 @@ define(function () {
                 // Create model object
                 this.models[name] = {
                     data: data,
-                    save: this.saveModel.bind(this,name),
-                    get: this.getModel.bind(this,name)
+                    save: this.sync.bind(this,name,'POST'),
+                    get: this.sync.bind(this,name,'GET')
                 };
                 
                 // If URL of endpoint supplied, set property
@@ -524,34 +524,15 @@ define(function () {
 
         },
         
-        saveModel: function (name) {
+        sync: function (name, method){
             var url = this.models[name].url,
                 data = this.models[name].data,
                 syncParams = {
                     url: url,
-                    type: 'POST',
+                    type: method,
                     data: data,
                     success: function(){
-                        console.log('SAVED');
-                    },
-                    error: function(){
-                        console.log('ERROR');
-                    }
-                };
-                
-            // Call the ajax function
-            this.ajax(syncParams);
-        },
-        
-        getModel: function () {
-            var url = this.models[name].url,
-                data = this.models[name].data,
-                syncParams = {
-                    url: url,
-                    type: 'GET',
-                    data: data,
-                    success: function(){
-                        console.log('SAVED');
+                        console.log('COMPLETE');
                     },
                     error: function(){
                         console.log('ERROR');
