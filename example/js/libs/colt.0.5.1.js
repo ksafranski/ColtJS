@@ -483,7 +483,7 @@ define(function () {
         },
         
         /**
-         * @method Model
+         * @method model
          * 
          * Allows for local API model create, read, and delete
          * 
@@ -502,8 +502,14 @@ define(function () {
                 // Create model object
                 this.models[name] = {
                     data: data,
-                    save: this.sync.bind(this,name,'POST'),
-                    get: this.sync.bind(this,name,'GET')
+                    // Define save method, ex: Colt.model('some_model').get();
+                    get: this.sync.bind(this,name,'GET'),
+                    // Define get method, ex: Colt.model('some_model').put();
+                    put: this.sync.bind(this,name,'PUT'),
+                    // Define post method, ex: Colt.model('some_model').post();
+                    post: this.sync.bind(this,name,'POST'),
+                    // Define delete method, ex: Colt.model('some_model').delete;
+                    delete: this.sync.bind(this,name,'DELETE')
                 };
                 
                 // If URL of endpoint supplied, set property
@@ -523,14 +529,32 @@ define(function () {
             }
 
         },
-        
+
+        /**
+         * @method parseURL
+         * 
+         * Parses model's url property against data object
+         * 
+         * @param {String} url The url of the model
+         * @param {Object} data Contents of the model
+         */
         parseURL: function (url, data) {
             return url.replace(/\{([^}]+)\}/g, function (i, match) {
                 return data[match];
             });
         },
         
+        /**
+         * @method sync
+         * 
+         * Gets bound to models, used to access API
+         * 
+         * @param {String} name Name of the model
+         * @param {String} method RESTful request method
+         */
+        
         sync: function (name, method){
+            // Define call
             var url = this.parseURL(this.models[name].url, this.models[name].data),
                 data = this.models[name].data,
                 syncParams = {
