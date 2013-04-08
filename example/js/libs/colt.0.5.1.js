@@ -492,29 +492,44 @@ define(function () {
          * 
          * Specify a object value to `set`, none to `get`, and 'null' to `clear`
          */
-        model: function (name, data, url) {
+        model: function (name, data, url, onchange) {
             
             url = url || false;
+            onchange = onchange || false;
             
             // If value is detected, set new or modify store
             if (typeof data !== "undefined" && data !== null) {
                 
-                // Create model object
-                this.models[name] = {
-                    data: data,
-                    // Define save method, ex: Colt.model('some_model').get();
-                    get: this.sync.bind(this,name,'GET'),
-                    // Define get method, ex: Colt.model('some_model').put();
-                    put: this.sync.bind(this,name,'PUT'),
-                    // Define post method, ex: Colt.model('some_model').post();
-                    post: this.sync.bind(this,name,'POST'),
-                    // Define delete method, ex: Colt.model('some_model').delete;
-                    delete: this.sync.bind(this,name,'DELETE')
-                };
+                // Create new model object
+                if (!this.models.hasOwnProperty(name)) {
+                    this.models[name] = {
+                        data: data,
+                        // Define save method, ex: Colt.model('some_model').get();
+                        get: this.sync.bind(this, name, 'GET'),
+                        // Define get method, ex: Colt.model('some_model').put();
+                        put: this.sync.bind(this, name, 'PUT'),
+                        // Define post method, ex: Colt.model('some_model').post();
+                        post: this.sync.bind(this, name, 'POST'),
+                        // Define delete method, ex: Colt.model('some_model').delete;
+                        delete: this.sync.bind(this, name, 'DELETE')
+                    };
+                
+                // Modify model data
+                } else {
+                    this.models[name].data = data;
+                    if (this.models[name].hasOwnProperty('onchange')) {
+                        this.models[name].onchange(data);
+                    }
+                }
                 
                 // If URL of endpoint supplied, set property
-                if(url){
+                if (url) {
                     this.models[name].url = url;
+                }
+                
+                // If onchange fn is specified, set as property
+                if (onchange) {
+                    this.models[name].onchange = onchange;
                 }
             }
 
