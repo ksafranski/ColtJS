@@ -497,7 +497,7 @@ define(function () {
             url = url || false;
             onchange = onchange || false;
             
-            // If value is detected, set new or modify store
+            // If value is detected, set new or modify model
             if (typeof data !== "undefined" && data !== null) {
                 
                 // Create new model object
@@ -570,17 +570,26 @@ define(function () {
         
         sync: function (name, method){
             // Define call
-            var url = this.parseURL(this.models[name].url, this.models[name].data),
+            var _this = this,
+                url = this.parseURL(this.models[name].url, this.models[name].data),
                 data = this.models[name].data,
                 syncParams = {
                     url: url,
                     type: method,
                     data: data,
-                    success: function(){
-                        console.log('COMPLETE');
+                    success: function(returnData){
+                        // On GET success, Update model data
+                        if (method==='GET') {
+                            _this.model(name,returnData);
+                        }
+                        
+                        // On DELETE success, Remove model
+                        if (method==='DELETE') {
+                            _this.model(name,null);
+                        }
                     },
-                    error: function(){
-                        console.log('ERROR');
+                    error: function(req){
+                        console.error('MODEL SYNC ERROR ON REQUEST', req);
                     }
                 };
                 
@@ -713,7 +722,7 @@ define(function () {
             xhr.request.open(xhr.type, xhr.url, xhr.async);
         
             // Set request header for POST
-            if (xhr.type.toUpperCase() === "POST") {
+            if (xhr.type.toUpperCase() === "POST" || xhr.type.toUpperCase() === "PUT") {
                 xhr.request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             }
         

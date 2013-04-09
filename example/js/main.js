@@ -15,6 +15,7 @@ define(["colt"], function (Colt) {
         "modules/modone",
         "modules/modtwo",
         "modules/modthree",
+        "modules/modfour",
         "modules/modform"
     ];
 
