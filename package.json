@@ -4,11 +4,11 @@
   "private": true,
   "description": "A simple, efficient, and modular JavaScript Framework.",
   "dependencies": {
-    "uglify-js" : "~2.X.X"
+    "uglify-js" : "~2.X.X",
+    "restify": "~2.X.X"
   },
   "scripts": {
-    "build" : "node_modules/uglifyjs/bin/uglifyjs colt.js -o colt.min.js
-    --comments"
+    "build" : "node_modules/uglifyjs/bin/uglifyjs colt.js -o colt.min.js --comments"
   },
   "repository": {
     "type": "git",

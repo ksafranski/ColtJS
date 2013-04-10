@@ -1,0 +1,10 @@
+{
+    "foo": {
+        "id": 1,
+        "string": "bar"
+    },
+    "sit": {
+        "id": 2,
+        "string": "lor"
+    }
+}

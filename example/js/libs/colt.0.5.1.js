@@ -518,7 +518,7 @@ define(function () {
                 } else {
                     this.models[name].data = data;
                     if (this.models[name].hasOwnProperty('onchange')) {
-                        this.models[name].onchange(data);
+                        this.models[name].onchange(model);
                     }
                 }
                 
