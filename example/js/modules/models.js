@@ -33,7 +33,7 @@ define(function(){
                 };
                 
             if (!idVal.length || !fooVal.length) {
-                alert('Please enter a values for the model');
+                alert('Please enter values for the model');
             } else { 
                 
                 // Create the model with a name, data, url, and onchange function bind
@@ -50,14 +50,16 @@ define(function(){
         
         changeModel: function () {
             
-            var testVal = this.el.querySelectorAll('[name="foo"]')[0].value,
-                modelData = { foo: testVal };
+            var idVal = this.el.querySelectorAll('[name="id"]')[0].value,
+                fooVal = this.el.querySelectorAll('[name="foo"]')[0].value,
+                modelData = { 
+                    id: idVal, 
+                    foo: fooVal
+                };
                 
-            if (!testVal.length) {
-                
-                alert('Please enter a value for Foo...');
-               
-            } else{ 
+            if (!idVal.length || !fooVal.length) {
+                alert('Please enter values for the model');
+            } else { 
             
                 Colt.model('test_model', modelData);
             
