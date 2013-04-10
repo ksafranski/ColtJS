@@ -5,7 +5,8 @@
   "description": "A simple, efficient, and modular JavaScript Framework.",
   "dependencies": {
     "uglify-js" : "~2.X.X",
-    "restify": "~2.X.X"
+    "restify": "~2.X.X",
+    "node-static": "~0.6.X"
   },
   "scripts": {
     "build" : "node_modules/uglifyjs/bin/uglifyjs colt.js -o colt.min.js --comments"
