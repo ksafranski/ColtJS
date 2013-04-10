@@ -25,15 +25,19 @@ define(function(){
         
         createModel: function() {
             
-            var testVal = this.el.querySelectorAll('[name="foo"]')[0].value,
-                modelData = { foo: testVal };
+            var idVal = this.el.querySelectorAll('[name="id"]')[0].value,
+                fooVal = this.el.querySelectorAll('[name="foo"]')[0].value,
+                modelData = { 
+                    id: idVal, 
+                    foo: fooVal
+                };
                 
-            if (!testVal.length) {
-                alert('Please enter a value for Foo...');
+            if (!idVal.length || !fooVal.length) {
+                alert('Please enter a values for the model');
             } else { 
                 
                 // Create the model with a name, data, url, and onchange function bind
-                Colt.model('test_model', modelData, window.location.origin+'/api/{foo}', function () {
+                Colt.model('test_model', modelData, window.location.origin+'/api/{id}', function () {
                     // This is the onchange callback
                     console.log('TRIGGERED: Model has changed!');
                 });

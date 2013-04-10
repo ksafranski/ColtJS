@@ -2,10 +2,13 @@ var restify = require('restify'),
     nstatic = require('node-static'),
     fs = require('fs'),
     data = __dirname + '/data.json',
-    server = restify.createServer();
+    server = restify.createServer(),
+    file = new nstatic.Server('');
 
 
-// Process GET
+/**
+ * Process GET
+ */
 server.get('/api/:id', function(req, res, next) {
 
     var id = req.params.id,
@@ -15,18 +18,16 @@ server.get('/api/:id', function(req, res, next) {
     
     fs.readFile(data, 'utf8', function (err, data) {
         if (err) {
-            res.send(404, "Could Not Load Data");
+            res.send(404, "ERROR: Could Not Load Data");
             return;
         }
         
         // Parse JSON
         data = JSON.parse(data);
         
-        console.log(data);
-        
         // Check auth
         for (var i=0, z=data.length; i<z; i++) {
-            if(data[i].id==id){ // Matching email
+            if (data[i].id==id) { // Matching ID
                 pass = true;
                 sendback = data[i];
             }
@@ -34,8 +35,8 @@ server.get('/api/:id', function(req, res, next) {
         
         if (pass) {
             res.send(200, sendback);
-        }else{
-            res.send(404, "No Match");
+        } else {
+            res.send(404, "ERROR: No Match");
         }
         
         
@@ -44,15 +45,18 @@ server.get('/api/:id', function(req, res, next) {
 });
 
 
-// Serve static files
-var file = new nstatic.Server('');
+/** 
+ * Serve static files
+ */
 server.get(/^\/.*/, function(req, res, next) {
     file.serve(req, res, next);
     return next();
 });
 
 
-// Process POST
+/**
+ * Process POST
+ */
 server.post('/api/:id', function(req, res) {
     
     console.log('POST METHOD.');
@@ -61,7 +65,9 @@ server.post('/api/:id', function(req, res) {
     
 });
 
-// Process PUT
+/**
+ * Process PUT
+ */
 server.put('/api/:id', function(req, res) {
     
     console.log('PUT METHOD.');
@@ -70,7 +76,9 @@ server.put('/api/:id', function(req, res) {
     
 });
 
-// Process DELETE
+/**
+ * Process DELETE
+ */
 server.del('/api/:id', function(req, res) {
     
     console.log('DELETE METHOD.');
@@ -79,4 +87,8 @@ server.del('/api/:id', function(req, res) {
     
 });
 
+
+/**
+ * Start Server
+ */
 server.listen(8090);

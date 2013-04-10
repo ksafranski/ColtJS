@@ -1,6 +1,9 @@
 <h2>Models &amp; Data</h2>
 <p>Demonstration of models and data. Check Javascript console for results.</p>
 
+<label>ID:</label>
+<input type="test" name="id" placeholder="Enter an ID">
+
 <label>Foo:</label>
 <input type="text" name="foo" placeholder="Enter test string">
 

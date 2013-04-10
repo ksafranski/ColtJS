@@ -494,8 +494,11 @@ define(function () {
          */
         model: function (name, data, url, onchange) {
             
+            var model;
+            
             url = url || false;
             onchange = onchange || false;
+            
             
             // If value is detected, set new or modify model
             if (typeof data !== "undefined" && data !== null) {
@@ -516,9 +519,10 @@ define(function () {
                 
                 // Modify model data
                 } else {
-                    this.models[name].data = data;
-                    if (this.models[name].hasOwnProperty('onchange')) {
-                        this.models[name].onchange(model);
+                    model = this.models[name];
+                    model.data = data;
+                    if (model.hasOwnProperty('onchange')) {
+                        model.onchange(model);
                     }
                 }
                 
@@ -540,7 +544,9 @@ define(function () {
 
             // Null specified, delete model
             if (data === null) {
-                delete this.models[name];
+                if (this.models.hasOwnProperty(name)) {
+                    delete this.models[name];
+                }
             }
 
         },
@@ -569,18 +575,22 @@ define(function () {
          */
         
         sync: function (name, method){
+            
+            var model = this.models[name];
+            
             // Define call
             var _this = this,
-                url = this.parseURL(this.models[name].url, this.models[name].data),
-                data = this.models[name].data,
+                url = this.parseURL(model.url, model.data),
+                data = model.data,
                 syncParams = {
                     url: url,
                     type: method,
                     data: data,
+                    qsData: false,
                     success: function(returnData){
                         // On GET success, Update model data
                         if (method==='GET') {
-                            _this.model(name,returnData);
+                            _this.model(name,JSON.parse(returnData));
                         }
                         
                         // On DELETE success, Remove model
@@ -589,7 +599,7 @@ define(function () {
                         }
                     },
                     error: function(req){
-                        console.error('MODEL SYNC ERROR ON REQUEST', req);
+                        console.error('MODEL SYNC ERROR ON REQUEST', req, data);
                     }
                 };
                 
@@ -620,6 +630,8 @@ define(function () {
          * `success`: Function called on successful request
          * 
          * `error`: Function called on failure of request
+         * 
+         * `qsData`: Allows blocking (set `false`) of data add to URL for RESTful requests
          */
 
         ajax: function() {
@@ -636,18 +648,18 @@ define(function () {
                 xhr = arguments[1];
                 // Add first argument to xhr object as url
                 xhr.url = arguments[0];
-            }
-        
+            }        
         
             // Parameters & Defaults
             xhr.request = false;
             xhr.type = xhr.type || "GET";
             xhr.data = xhr.data || null;
+            if (xhr.qsData || !xhr.hasOwnProperty("qsData")) { xhr.qsData = true; } else { xhr.qsData = false; }
             if (xhr.cache || !xhr.hasOwnProperty("cache")) { xhr.cache = true; } else { xhr.cache = false; }
             if (xhr.async || !xhr.hasOwnProperty("async")) { xhr.async = true; } else { xhr.async = false; }
             if (xhr.success && typeof xhr.success === "function") { xhr.success = xhr.success; } else { xhr.success = false; }
             if (xhr.error && typeof xhr.error === "function") { xhr.error = xhr.error; } else { xhr.error = false; }
-        
+            
             // Format xhr.data & encode values
             if (xhr.data) {
                 var param_count = 0,
@@ -680,7 +692,8 @@ define(function () {
             }
         
             // Handle xhr.data on GET request type
-            if (xhr.data && xhr.type.toUpperCase() === "GET") {
+            if (xhr.data && xhr.type.toUpperCase() === "GET" && xhr.qsData) {
+                console.log("qsDATA: ", xhr.qsData);
                 formatURL(xhr.data);
             }
         
