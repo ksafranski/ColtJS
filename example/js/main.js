@@ -12,11 +12,11 @@ define(["colt"], function (Colt) {
     Colt.modules = [
         "modules/header",
         "modules/navigation",
-        "modules/modone",
-        "modules/modtwo",
-        "modules/modthree",
-        "modules/modfour",
-        "modules/modform"
+        "modules/home",
+        "modules/form",
+        "modules/models",
+        "modules/modalutil",
+        "modules/notificationutil"
     ];
 
     // Initialize application

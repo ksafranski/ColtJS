@@ -1,4 +1,4 @@
-<h2>This is Module Four</h2>
+<h2>Models &amp; Data</h2>
 <p>Demonstration of models and data. Check Javascript console for results.</p>
 
 <label>Foo:</label>

@@ -1,5 +1,5 @@
-<h2>This is Module Three</h2>
-<p>Content for Module Three Loaded!</p>
+<h2>Notification Utility</h2>
+<p>Content for Notification Utility Loaded!</p>
 <hr>
 <a class="show-success">Show Success</a>
 <a class="show-warning">Show Warning</a>

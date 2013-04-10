@@ -1,4 +1,4 @@
-<hr>
+<h2>Form Demo</h2>
 <form>
     <label>First Name:</label>
     <input type="text" name="fname" placeholder="First Name">

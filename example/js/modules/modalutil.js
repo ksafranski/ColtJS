@@ -1,6 +1,6 @@
 define(function(){
 
-    var modtwo = {
+    var modalutil = {
         
         dependencies: {
             'modal': 'utils/modal'
@@ -11,13 +11,13 @@ define(function(){
         },
        
         routes: {
-            'modtwo' : 'renderModuleTwo'
+            'modalutil' : 'renderModalUtil'
         },
         
         /**
          * Loads up this module's main view
          */
-        renderModuleTwo: function(){
+        renderModalUtil: function(){
             /** calling render for this module */
             Colt.render(this);
         },
@@ -35,6 +35,6 @@ define(function(){
            
     };
     
-    return modtwo;
+    return modalutil;
     
 });

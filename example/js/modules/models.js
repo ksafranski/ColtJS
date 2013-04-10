@@ -1,6 +1,6 @@
 define(function(){    
     
-    var modfour = {
+    var models = {
         
         events: {
             'click #create-model': 'createModel',
@@ -10,13 +10,13 @@ define(function(){
         },
     
         routes: {
-            'modfour': 'renderModuleFour'
+            'models': 'renderModels'
         },
     
         /**
          * Loads up this modules main view
          */
-        renderModuleFour: function(url_data){
+        renderModels: function(url_data){
             
             // Render template
             Colt.render(this);
@@ -79,6 +79,6 @@ define(function(){
         
     };
     
-    return modfour;
+    return models;
     
 });
