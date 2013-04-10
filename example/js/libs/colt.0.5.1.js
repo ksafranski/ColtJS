@@ -508,20 +508,20 @@ define(function () {
                     this.models[name] = {
                         data: data,
                         // Define save method, ex: Colt.model('some_model').get();
-                        get: this.sync.bind(this, name, 'GET'),
+                        "get": this.sync.bind(this, name, "GET"),
                         // Define get method, ex: Colt.model('some_model').put();
-                        put: this.sync.bind(this, name, 'PUT'),
+                        "put": this.sync.bind(this, name, "PUT"),
                         // Define post method, ex: Colt.model('some_model').post();
-                        post: this.sync.bind(this, name, 'POST'),
+                        "post": this.sync.bind(this, name, "POST"),
                         // Define delete method, ex: Colt.model('some_model').delete;
-                        delete: this.sync.bind(this, name, 'DELETE')
+                        "delete": this.sync.bind(this, name, "DELETE")
                     };
                 
                 // Modify model data
                 } else {
                     model = this.models[name];
                     model.data = data;
-                    if (model.hasOwnProperty('onchange')) {
+                    if (model.hasOwnProperty("onchange")) {
                         model.onchange(model);
                     }
                 }
@@ -589,17 +589,17 @@ define(function () {
                     qsData: false,
                     success: function(returnData){
                         // On GET success, Update model data
-                        if (method==='GET') {
+                        if (method==="GET") {
                             _this.model(name,JSON.parse(returnData));
                         }
                         
                         // On DELETE success, Remove model
-                        if (method==='DELETE') {
+                        if (method==="DELETE") {
                             _this.model(name,null);
                         }
                     },
                     error: function(req){
-                        console.error('MODEL SYNC ERROR ON REQUEST', req, data);
+                        console.error("MODEL SYNC ERROR ON REQUEST", req, data);
                     }
                 };
                 
@@ -766,7 +766,7 @@ define(function () {
             // If value is detected, set new or modify store
             if (typeof value !== "undefined" && value !== null) {
                 // Stringify objects
-                if(typeof value === 'object') {
+                if(typeof value === "object") {
                     value = JSON.stringify(value);
                 }
                 // Add to / modify storage
