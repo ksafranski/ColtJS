@@ -631,7 +631,7 @@ define(function () {
          * 
          * `error`: Function called on failure of request
          * 
-         * `qsData`: Allows blocking (set `false`) of data add to URL for RESTful requests
+         * `qsData`: Allows blocking (set `false`) of `data` add to URL for RESTful requests
          */
 
         ajax: function() {
