@@ -113,8 +113,6 @@ server.put('/api', function(req, res) {
  */
 server.del('/api/:id', function(req, res) {
     
-    var dataRem = [];
-    
     fs.readFile(data, 'utf8', function (err, dataMod) {
         if (err) {
             res.send(404, "ERROR: Could Not Load Data");
@@ -126,16 +124,17 @@ server.del('/api/:id', function(req, res) {
         
         // Check for existence & delete
         for (var i=0, z=dataMod.length; i<z; i++) {
-            if (dataMod[i].id!=req.params.id) { // Matching ID
-                dataRem[i] = dataMod[i];
+            if (dataMod[i].id==req.params.id) { // Matching ID
+                dataMod.splice(i,1);
+                break;
             }
         }
         
         // Stringify data
-        dataRem = JSON.stringify(dataRem, null, 4);
+        dataMod = JSON.stringify(dataMod, null, 4);
         
         // Save to file
-        fs.writeFile(data, dataRem, function(err) {
+        fs.writeFile(data, dataMod, function(err) {
             if(err) {
                 res.send(404, 'ERROR: Could Not Write Changes');
             } else {
