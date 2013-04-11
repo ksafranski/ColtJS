@@ -59,6 +59,12 @@ define(function () {
          * @type {Object}
          */
         models: {},
+        
+        /**
+         * Container for all defined xhr requests
+         * @type {Object}
+         */
+        requests: {},
 
         /**
          * @method init
@@ -550,20 +556,6 @@ define(function () {
             }
 
         },
-
-        /**
-         * @method parseURL
-         * 
-         * Parses model's url property against data object
-         * 
-         * @param {String} url The url of the model
-         * @param {Object} data Contents of the model
-         */
-        parseURL: function (url, data) {
-            return url.replace(/\{([^}]+)\}/g, function (i, match) {
-                return data[match];
-            });
-        },
         
         /**
          * @method sync
@@ -605,6 +597,82 @@ define(function () {
                 
             // Call the ajax function
             this.ajax(syncParams);
+        },
+        
+        /**
+         * @method request
+         * 
+         * Allows for storing pre-set xhr requests for re-use
+         * 
+         * @param {String} name The name of the xhr-request
+         * @param {Object} [params] Paramaters of the request to define (see @method ajax)
+         */
+        request: function (name, params) {
+
+            // If value is detected, set new or modify request
+            if (typeof params === "object" && params !== null) {
+                // Stringify objects
+                this.requests[name] = {
+                    // Connection parameters
+                    params: params,
+                    // Define call method, ex: Colt.request('some_request').call(data);
+                    call: this.callRequest.bind(this, name)
+                };
+            }
+            
+            // No params supplied, return value
+            if (typeof data === "undefined") {
+                return this.requests[name];
+            }
+
+            // Null specified, remove store
+            if (params === null) {
+                if (this.requests.hasOwnProperty(name)) {
+                    delete this.requests[name];
+                }
+            }
+
+        },
+        
+        /**
+         * @method callRequest
+         * 
+         * Fires a stored request via ajax()
+         * 
+         * @param {Object} data The data to be sent with the request
+         */
+        callRequest: function (name, data) {
+            var request;
+            
+            if (this.requests.hasOwnProperty(name)) {
+                
+                // Get the request
+                request = this.requests[name].params;
+
+                // Parse any URL data
+                request.url = this.parseURL(request.url, data);
+                
+                // Set the data param
+                request.data = data;
+                
+                // Call the ajax request
+                this.ajax(request);
+                
+            }
+        },
+        
+        /**
+         * @method parseURL
+         * 
+         * Parses model's url property against data object
+         * 
+         * @param {String} url The url of the model
+         * @param {Object} data Contents of the model
+         */
+        parseURL: function (url, data) {
+            return url.replace(/\{([^}]+)\}/g, function (i, match) {
+                return data[match];
+            });
         },
 
         /**

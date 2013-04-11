@@ -14,7 +14,7 @@
  * Default port 8090
  * 
  * Static content served from yourserver:8090,
- * API calls made to yourserver.com/api
+ * API calls made to yourserver.com:8090/api
  * 
  * GET & DELETE accept yourserver.com/api/:id
  * 
