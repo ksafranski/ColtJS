@@ -123,7 +123,7 @@ server.get('/api/:id', function(req, res, next) {
 /**
  * Process POST Request
  */
-server.post('/api', function(req, res) {
+server.post('/api/:id', function(req, res) {
     
     doPutPost(req.params, res);
     
@@ -132,7 +132,7 @@ server.post('/api', function(req, res) {
 /**
  * Process PUT Request
  */
-server.put('/api', function(req, res) {
+server.put('/api/:id', function(req, res) {
     
     doPutPost(req.params, res);
     

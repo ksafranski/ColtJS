@@ -498,61 +498,74 @@ define(function () {
          * 
          * Specify a object value to `set`, none to `get`, and 'null' to `clear`
          */
-        model: function (name, data, url, onchange) {
+        model: function () {
             
-            var model;
+            var name,
+                model,
+                params;
             
-            url = url || false;
-            onchange = onchange || false;
-            
-            
-            // If value is detected, set new or modify model
-            if (typeof data !== "undefined" && data !== null) {
+            // If first argument is an object, create model
+            if (typeof arguments[0] === "object") {
                 
-                // Create new model object
-                if (!this.models.hasOwnProperty(name)) {
-                    this.models[name] = {
-                        data: data,
+                params = arguments[0];
+                
+                // Check optional parameters
+                params.url = params.url || false;
+                params.onchange = params.onchange || false;
+                
+                // Core properties
+                if(typeof params.name === 'string' && params.name !== '') {
+                    this.models[params.name] = {
+                        data: params.data,
                         // Define save method, ex: Colt.model('some_model').get();
-                        "get": this.sync.bind(this, name, "GET"),
+                        "get": this.sync.bind(this, params.name, "GET"),
                         // Define get method, ex: Colt.model('some_model').put();
-                        "put": this.sync.bind(this, name, "PUT"),
+                        "put": this.sync.bind(this, params.name, "PUT"),
                         // Define post method, ex: Colt.model('some_model').post();
-                        "post": this.sync.bind(this, name, "POST"),
+                        "post": this.sync.bind(this, params.name, "POST"),
                         // Define delete method, ex: Colt.model('some_model').delete;
-                        "delete": this.sync.bind(this, name, "DELETE")
+                        "delete": this.sync.bind(this, params.name, "DELETE")
                     };
-                
-                // Modify model data
+                    
+                    // If URL of endpoint supplied, set property
+                    if (params.url) {
+                        this.models[params.name].url = params.url;
+                    }
+                    
+                    // If onchange fn is specified, set as property
+                    if (params.onchange) {
+                        this.models[params.name].onchange = params.onchange;
+                    }
                 } else {
-                    model = this.models[name];
-                    model.data = data;
+                    console.error("CAN NOT CREATE NULL MODEL");
+                }
+            
+            // Modify existing object
+            } else if (arguments.length===2) {
+                
+                name = arguments[0];
+                model = this.models[name];
+                
+                // Modify data
+                if (typeof arguments[1] === "object" && arguments[1]!==null) {
+                    model.data = arguments[1];
+                    
+                    // Fire onchange
                     if (model.hasOwnProperty("onchange")) {
                         model.onchange(model);
                     }
-                }
-                
-                // If URL of endpoint supplied, set property
-                if (url) {
-                    this.models[name].url = url;
-                }
-                
-                // If onchange fn is specified, set as property
-                if (onchange) {
-                    this.models[name].onchange = onchange;
-                }
-            }
-
-            // No value supplied, return value
-            if (typeof data === "undefined") {
-                return this.models[name];
-            }
-
-            // Null specified, delete model
-            if (data === null) {
-                if (this.models.hasOwnProperty(name)) {
+                        
+                // Delete model
+                } else {
                     delete this.models[name];
                 }
+                
+            
+            // Return model
+            } else {
+                name = arguments[0];
+                model = this.models[name];
+                return model;
             }
 
         },
@@ -591,7 +604,7 @@ define(function () {
                         }
                     },
                     error: function(req){
-                        console.error("MODEL SYNC ERROR ON REQUEST", req, data);
+                        console.error("MODEL SYNC ERROR", req, data);
                     }
                 };
                 
@@ -605,7 +618,7 @@ define(function () {
          * Allows for storing pre-set xhr requests for re-use
          * 
          * @param {String} name The name of the xhr-request
-         * @param {Object} [params] Paramaters of the request to define (see @method ajax)
+         * @param {Object} params Paramaters of the request to define (see @method ajax)
          */
         request: function (name, params) {
 
@@ -620,12 +633,12 @@ define(function () {
                 };
             }
             
-            // No params supplied, return value
+            // No params supplied, return request
             if (typeof data === "undefined") {
                 return this.requests[name];
             }
 
-            // Null specified, remove store
+            // Null specified, remove request
             if (params === null) {
                 if (this.requests.hasOwnProperty(name)) {
                     delete this.requests[name];
@@ -637,23 +650,44 @@ define(function () {
         /**
          * @method callRequest
          * 
-         * Fires a stored request via ajax()
+         * Fires a stored request via ajax() method
          * 
+         * @param {String} name The name passed from the bind, or manually supplied
          * @param {Object} data The data to be sent with the request
+         * @param {Function} [success] Optional success callback, can also be specified in request params
+         * @param {Function} [error] Optional error callback, can also be specified in request params
          */
-        callRequest: function (name, data) {
-            var request;
+        callRequest: function (name, data, success, error) {
+            
+            var request = {};
+            
+            // Check for optional success and error callbacks
+            success = success || false;
+            error = error || false;
             
             if (this.requests.hasOwnProperty(name)) {
                 
-                // Get the request
-                request = this.requests[name].params;
+                // We have to loop the request's params into the new request object
+                // so we don't override the requests settings
+                for (var param in this.requests[name].params) {
+                    request[param] = this.requests[name].params[param];    
+                }
 
                 // Parse any URL data
                 request.url = this.parseURL(request.url, data);
                 
                 // Set the data param
                 request.data = data;
+                
+                // Check for success callback
+                if (success && typeof success==='function') {
+                    request.success = success;
+                }
+                
+                // Check for error callback
+                if (error && typeof error==='function') {
+                    request.error = error;
+                }
                 
                 // Call the ajax request
                 this.ajax(request);
@@ -761,7 +795,6 @@ define(function () {
         
             // Handle xhr.data on GET request type
             if (xhr.data && xhr.type.toUpperCase() === "GET" && xhr.qsData) {
-                console.log("qsDATA: ", xhr.qsData);
                 formatURL(xhr.data);
             }
         
