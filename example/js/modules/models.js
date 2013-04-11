@@ -37,9 +37,14 @@ define(function(){
             } else { 
                 
                 // Create the model with a name, data, url, and onchange function bind
-                Colt.model('test_model', modelData, window.location.origin+'/api/{id}', function () {
-                    // This is the onchange callback
-                    console.log('TRIGGERED: Model has changed!');
+                Colt.model({
+                    name: 'test_model', 
+                    data: modelData, 
+                    url: window.location.origin+'/api/{id}', 
+                    onchange: function () {
+                        // This is the onchange callback
+                        console.log('TRIGGERED: Model has changed!');
+                    }
                 });
                 
                 console.log('Model Created!');
