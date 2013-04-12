@@ -536,6 +536,10 @@ define(function () {
                     if (params.onchange) {
                         this.models[params.name].onchange = params.onchange;
                     }
+                    
+                    // Return the model
+                    return this.models[params.name];
+                    
                 } else {
                     console.error("CAN NOT CREATE NULL MODEL");
                 }
