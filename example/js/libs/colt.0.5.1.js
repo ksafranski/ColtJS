@@ -537,6 +537,11 @@ define(function () {
                         this.models[params.name].onchange = params.onchange;
                     }
                     
+                    // If onsync fn is specified, set as property
+                    if (params.onsync) {
+                        this.models[params.name].onsync = params.onsync;
+                    }
+                    
                     // Return the model
                     return this.models[params.name];
                     
@@ -556,7 +561,7 @@ define(function () {
                     
                     // Fire onchange
                     if (model.hasOwnProperty("onchange")) {
-                        model.onchange(model);
+                        model.onchange(model.data);
                     }
                         
                 // Delete model
@@ -606,9 +611,20 @@ define(function () {
                         if (method==="DELETE") {
                             _this.model(name,null);
                         }
+                        
+                        // Fire onsync if present
+                        if (model.hasOwnProperty('onsync')) {
+                            model.onsync({ status: "success", data: returnData });
+                        }
                     },
                     error: function(req){
-                        console.error("MODEL SYNC ERROR", req, data);
+                        // Fire onsync if present
+                        if (model.hasOwnProperty('onsync')) {
+                            model.onsync({ status: "error", data: req });
+                        }
+                        
+                        // Drop error bomb
+                        console.error('MODEL SYNC ERROR: ', req);
                     }
                 };
                 
@@ -635,6 +651,10 @@ define(function () {
                     // Define call method, ex: Colt.request('some_request').call(data);
                     call: this.callRequest.bind(this, name)
                 };
+                
+                // Return the request for variable assignment
+                return this.requests[name];
+                
             }
             
             // No params supplied, return request

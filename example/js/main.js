@@ -10,13 +10,13 @@ define(["colt"], function (Colt) {
 
     // Define all of the modules
     Colt.modules = [
-        "modules/header",
-        "modules/navigation",
-        "modules/home",
-        "modules/form",
-        "modules/models",
-        "modules/modalutil",
-        "modules/notificationutil"
+        "views/header",
+        "views/navigation",
+        "views/home",
+        "views/form",
+        "views/models",
+        "views/modalutil",
+        "views/notificationutil"
     ];
 
     // Initialize application

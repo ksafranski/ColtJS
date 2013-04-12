@@ -181,6 +181,9 @@ server.del('/api/:id', function(req, res) {
  * Serve static files
  */
 server.get(/^\/.*/, function(req, res, next) {
+    setTimeout(function(){
+        res.send(404);
+    }, 500);
     file.serve(req, res, next);
     return next();
 });
