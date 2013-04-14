@@ -1,28 +1,28 @@
 {
   "name": "ColtJS",
-  "version": "0.5.1",
+  "version": "0.7.0",
   "private": true,
   "description": "A simple, efficient, and modular JavaScript Framework.",
   "dependencies": {
-    "uglify-js" : "~2.X.X",
+    "uglify-js": "~2.X.X",
     "restify": "~2.X.X",
     "node-static": "~0.6.X"
   },
   "scripts": {
-    "build" : "node_modules/uglifyjs/bin/uglifyjs colt.js -o colt.min.js --comments"
+    "build": "node_modules/uglifyjs/bin/uglifyjs colt.js -o colt.min.js --comments"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/Fluidbyte/ColtJS.git"
   },
   "bugs": {
-      "url": "https://github.com/Fluidbyte/ColtJS/issues"
+    "url": "https://github.com/Fluidbyte/ColtJS/issues"
   },
   "author": "Kent Safranski <kent@fluidbyte.net> (http://fluidbyte.net)",
   "license": "MIT",
   "homepage": "http://coltjs.com",
   "readmeFilename": "README.md",
   "contributors": [
-      "Luiz Lopes <luiz@wickeddeveloper.com> (http://wickeddeveloper.com)"
+    "Luiz Lopes <luiz@wickeddeveloper.com> (http://wickeddeveloper.com)"
   ]
 }
