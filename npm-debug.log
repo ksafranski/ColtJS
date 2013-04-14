@@ -1,0 +1,31 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/var/www/nvm/v0.10.0/bin/node',
+1 verbose cli   '/var/www/nvm/v0.10.0/bin/npm',
+1 verbose cli   'version',
+1 verbose cli   '0.7.0' ]
+2 info using npm@1.2.14
+3 info using node@v0.10.0
+4 silly exec git "status" "--porcelain"
+5 silly git,status,--porcelain, spawning
+6 error Error: Git working directory not clean.
+6 error M colt.js
+6 error M colt.min.js
+6 error M component.json
+6 error M example/js/libs/colt.0.5.1.js
+6 error     at /var/www/nvm/v0.10.0/lib/node_modules/npm/lib/version.js:82:33
+6 error     at ChildProcess.<anonymous> (/var/www/nvm/v0.10.0/lib/node_modules/npm/lib/utils/exec.js:61:5)
+6 error     at ChildProcess.EventEmitter.emit (events.js:98:17)
+6 error     at maybeClose (child_process.js:700:16)
+6 error     at Socket.<anonymous> (child_process.js:913:11)
+6 error     at Socket.EventEmitter.emit (events.js:95:17)
+6 error     at Pipe.close (net.js:436:12)
+7 error If you need help, you may report this log at:
+7 error     <http://github.com/isaacs/npm/issues>
+7 error or email it to:
+7 error     <npm-@googlegroups.com>
+8 error System Linux 2.6.32-042stab076.5
+9 error command "/var/www/nvm/v0.10.0/bin/node" "/var/www/nvm/v0.10.0/bin/npm" "version" "0.7.0"
+10 error cwd /var/www/workspace/Colt
+11 error node -v v0.10.0
+12 error npm -v 1.2.14
+13 verbose exit [ 1, true ]
