@@ -1,6 +1,6 @@
 define(function(){    
     
-    var modform = {
+    var form = {
            
         dependencies: {
             'validation': 'utils/validation'
@@ -55,14 +55,13 @@ define(function(){
         },
     
         routes: {
-            '' : 'renderModuleForm',
-            'modone': 'renderModuleForm'
+            'form': 'renderForm'
         },
     
         /**
          * Loads up this modules main view
          */
-        renderModuleForm: function(){            
+        renderForm: function(){            
             // Render template
             Colt.render(this);
             this.validation.bind(this);
@@ -77,6 +76,6 @@ define(function(){
         
     };
     
-    return modform;
+    return form;
     
 });

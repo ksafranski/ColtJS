@@ -1,20 +1,20 @@
 define(function(){    
     
-    var modone = {
+    var home = {
         
         events: {
-            'click .modone-event': 'testEvent'
+            'click .home-event': 'testEvent'
         },
     
         routes: {
-            '' : 'renderModuleOne',
-            'modone': 'renderModuleOne'
+            '' : 'renderHome',
+            'home': 'renderHome'
         },
     
         /**
          * Loads up this modules main view
          */
-        renderModuleOne: function(url_data){
+        renderHome: function(url_data){
             
             // Show any url data (query string)
             //console.log(url_data);
@@ -47,7 +47,7 @@ define(function(){
             Colt.render(this,data);
             
             // Access other modules
-            Colt.access('modthree', function(scope){ 
+            Colt.access('notificationutil', function(scope){ 
                 console.log(scope.tester);
             });
             
@@ -59,6 +59,6 @@ define(function(){
         
     };
     
-    return modone;
+    return home;
     
 });

@@ -1,6 +1,6 @@
 define(function(){
 
-    var modthree = {
+    var notificationutil = {
         
         dependencies: {
             'notification': 'utils/notification',
@@ -16,13 +16,13 @@ define(function(){
         },
         
         routes: {
-            'modthree' : 'renderModuleThree'
+            'notificationutil' : 'renderNotificationUtil'
         },
         
         /**
          * Loads up this module's main view
          */
-        renderModuleThree: function(){
+        renderNotificationUtil: function(){
             /** calling render for this module */
             Colt.render(this);
         },
@@ -45,6 +45,6 @@ define(function(){
         
     };
     
-    return modthree;
+    return notificationutil;
     
 });
