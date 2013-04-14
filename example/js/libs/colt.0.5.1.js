@@ -1,7 +1,7 @@
 /**
  * ColtJS Framework
  *
- * @version 0.5.1
+ * @version 0.7.0
  * @license MIT-License <http://opensource.org/licenses/MIT>
  *
  * Copyright (c) 2013 ColtJS
@@ -563,6 +563,9 @@ define(function () {
                     if (model.hasOwnProperty("onchange")) {
                         model.onchange(model.data);
                     }
+                    
+                    // Publish for any subscriptions
+                    this.publish("model_"+name+"_change", model.data);
                         
                 // Delete model
                 } else {
@@ -590,7 +593,8 @@ define(function () {
         
         sync: function (name, method){
             
-            var model = this.models[name];
+            var model = this.models[name],
+                sendback = {};
             
             // Define call
             var _this = this,
@@ -602,6 +606,11 @@ define(function () {
                     data: data,
                     qsData: false,
                     success: function(returnData){
+                        
+                        // Set sendback
+                        sendback.status = "success";
+                        sendback.data = returnData;
+                        
                         // On GET success, Update model data
                         if (method==="GET") {
                             _this.model(name,JSON.parse(returnData));
@@ -614,14 +623,25 @@ define(function () {
                         
                         // Fire onsync if present
                         if (model.hasOwnProperty("onsync")) {
-                            model.onsync({ status: "success", data: returnData });
+                            model.onsync(sendback);
                         }
+                        
+                        // Publish for any subscriptions
+                        _this.publish("model_"+name+"_sync", sendback);
                     },
                     error: function(req){
+                        
+                        // Set sendback
+                        sendback.status = "error";
+                        sendback.data = req;
+                        
                         // Fire onsync if present
                         if (model.hasOwnProperty("onsync")) {
-                            model.onsync({ status: "error", data: req });
+                            model.onsync(sendback);
                         }
+                        
+                        // Publish for any subscriptions
+                        _this.publish("model_"+name+"_sync", sendback);
                         
                         // Drop error bomb
                         console.error("MODEL SYNC ERROR: ", req);
@@ -648,7 +668,7 @@ define(function () {
                 this.requests[name] = {
                     // Connection parameters
                     params: params,
-                    // Define call method, ex: Colt.request('some_request').call(data);
+                    // Define call method, ex: Colt.request("some_request").call(data);
                     call: this.callRequest.bind(this, name)
                 };
                 
