@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Coltjs by Fluidbyte</title>
+    <title>ColtJS MV* Framework</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <link href="stylesheets/twilight.css" rel="stylesheet" type="text/css">
@@ -52,7 +52,7 @@
 
         <h1>ColtJS Modular Framework</h1>
 
-<hr><p>ColtJS is a simple framework allowing for easy deployment of JavaScript Application using asynchronous module definition. It's only dependency is <a target="_blank" href="http://www.requirejs.org">RequireJS</a>. The central concept behind behind 
+<hr><p>ColtJS is a simple framework allowing for easy deployment of JavaScript Applications using Asynchronous Module Definition (AMD). It's only dependency is <a target="_blank" href="http://www.requirejs.org">RequireJS</a>. The central concept behind behind 
     Colt is simplicity. The framework is built to be lightweight, flexible, and highly efficient.</p>
     
 <p>There are plenty Swiss-Army-Knife frameworks out there, Colt aims to give a solid, reliable foundation with a minimal footprint and set of tools which are truly needed. It is easily expandable with <a target="_blank" href="https://github.com/Fluidbyte/ColtJS/tree/master/_utils">utils</a> that 
@@ -61,14 +61,15 @@
 
 <p>Beyond the basic structuring and handling of module, the framework includes methods for handling the following:
 <ul>
-    <li><a href="#routing">Routing &amp; navigation</a></li>
-    <li><a href="#templates">Templates &amp; rendering</a></li>
-    <li><a href="#passing-data">URL parsing</a></li>
-    <li><a href="#ajax">AJAX</a></li>
-    <li><a href="#events">Event binding</a></li>
+    <li><a href="#routing">Routing &amp; Navigation</a></li>
+    <li><a href="#templates">Templates &amp; Rendering</a></li>
+    <li><a href="#models">Models &amp; Data</a></li>
     <li><a href="#utils-dependencies">Utilities &amp; dependencies</a></li>
-    <li><a href="#access">Cross-module access</a></li>
-    <li><a href="#persistent-storage">Persistent storage</a></li>
+    <li><a href="#access">Cross-Module Accessibility</a></li>
+    <li><a href="#passing-data">URL Data Parsing</a></li>
+    <li><a href="#events">Event Binding</a></li>
+    <li><a href="#ajax">AJAX</a></li>
+    <li><a href="#persistent-storage">Persistent Storage</a></li>
     <li><a href="#pub-sub">Pub/Sub</a></li>
 </ul>
 
@@ -177,6 +178,191 @@ define(['colt'], function (Colt) {
 
 });
 </code></pre>
+
+
+<a name="templates"></a>
+<hr>
+<h2>Templates &amp; Rendering</h2>
+
+<p>Templates should be placed in the <code>/templates</code> directory and given the same file name as the module and use the <code>.tpl</code> extension.</p>
+
+<p>ColtJS includes basic data replacement using Mustache-style tags, for example:</p>
+
+<pre><code data-language="html">&lt;h1&gt;{{title}}&lt;/h1&gt;
+&lt;p&gt;{{content}}&lt;/p&gt;
+</code></pre>
+
+<p>If another templating engine is required, simply pass it into the <code>main.js</code> file, then replace the render function. For example, using <a href="https://github.com/janl/mustache.js">MustacheJS</a>:</p>
+
+<pre><code data-language="javascript">require.config({
+    baseUrl: "js/",
+    paths: {
+        colt:       'libs/colt',
+        mustache:   'libs/mustache'
+    }
+});
+
+define(['colt','mustache'], function (Colt,Mustache) {
+
+    // Define all of the modules
+    Colt.modules = [
+        'modules/module_name',
+        ...additional modules...
+    ];
+
+    // Define custom render to use Mustache
+    Colt.render = function (scope,data) {
+        var template = scope.template,
+            rendered = Mustache.render(template,data);
+
+        // Render to DOM
+        document.getElementById(scope.mid).innerHTML = rendered;
+        document.getElementById(scope.mid).style.display = "block";
+
+        // Build Event Listeners
+        this.delegateEvents(scope.events, scope);
+    };
+
+    // Initialize application 
+    Colt.init(); 
+
+});
+</code></pre>
+
+<p>Colt also has an <code>unrender</code> method which is used to remove unused modules. If, for instance, custom transitions were being used this could be modified similar to the above Mustache example to 
+    act on the module during this process:
+</p>
+
+<pre><code data-language="javascript">require.config({
+    baseUrl: "js/",
+    paths: {
+        colt:       'libs/colt',
+        jquery:     'libs/jquery'
+    }
+});
+
+define(['colt','jquery'], function (Colt,$) {
+
+    // Define all of the modules
+    Colt.modules = [
+        'modules/module_name',
+        ...additional modules...
+    ];
+    
+    // Define custom render to use transition in...
+    Colt.render = function (scope, data) {
+        var template = scope.template,
+        // Replace any mustache-style {{VAR}}'s
+        rendered = template.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
+            return data[match];
+        });
+
+        // Render to DOM & Show Element
+        $('#'+scope.mid).fadeIn(300);
+
+        // Build Event Listeners
+        this.delegateEvents(scope.events, scope);
+    }
+
+    // Define custom unrender to use transition out...
+    Colt.unrender = function (module_name) {
+        $('#'+module_name).fadeOut(300);
+    };
+
+    // Initialize application 
+    Colt.init(); 
+
+});
+</code></pre>
+
+
+<a name="models"></a>
+<hr>
+<h2>Models &amp; Data</h2>
+
+<p>Colt utilizes a simple structure for working with models:</p>
+
+<pre><code data-language="javascript">var model = Colt.model({
+    name: "model_name",
+    data: { ...data... },
+    url: "/path/to/api",
+    onchange: function(data) { 
+        // Gets fired whenever model data changes
+        ...change event handler... 
+    },
+    onsync: function(response) {
+        // Gets fired whenever a sync event occurs, returns:
+        // { status: "success", data: { ...response data... } }
+        // or
+        // { status: "error", data: { ...xhr information... } }
+        ...sync event handler...
+    }
+});</code></pre>
+
+<p>The above would create a model and return it for variable assignment. Then to access the model you can use the variable assignment, or the following:</p>
+
+<pre><code data-language="javascript">Colt.model("model_name");</code></pre>
+
+<p>With only the name specified, the model is returned. It's data can be accessed by appending <code>.data</code> to the variable assignment, or via:
+
+<pre><code data-language="javascript">Colt.model("model_name").data;</code></pre>
+
+<p>The model can then be removed by providing <code>null</code> for the <code>data</code> parameter:</p>
+
+<pre><code data-language="javascript">Colt.model("model_name", null);</code></pre>
+
+<h3>RESTful API Connectivity</h3>
+
+<p>Models automatically are given four methods to connect with the url or endpoint supplied in definition:</p>
+
+<pre><code data-language="javascript">// GET request, will then set the data of the model on success
+Colt.model("model_name").get();
+// POST request
+Colt.model("model_name").post();
+// PUT request
+Colt.model("model_name").put();
+// DELETE request, will then pass back `null` data on success, deleting the local model as well
+Colt.model("model_name").delete();
+</code></pre>
+
+<p>The <code>url</code> parameter will be parsed for data matches before the request is called, so for example <code>/path/to/api/{foo}</code> would replace the <code>{foo}</code> 
+    with it's corresponding data attribute.
+</p>
+
+<p>The framework defaults to the core <code>Colt.ajax()</code> method through the <code>Colt.sync()</code> handler. This can be overwritten globally, or 
+a model can be set to perform specific actions by overwriting the defaults. For example, to overwrite post on the aforementioned model:
+</p>
+
+<pre><code data-language="javascript">var model = Colt.model("model_name");
+model.post = function() {
+    ...custom hanlder...
+});</code></pre>
+
+
+<h3>Subscribe to Change and Sync Events</h3>
+
+<p>In addition to setting default <code>onchange</code> and <code>onsync</code> callbacks, the framework automatically fires a <code>publish()</code> call on these events.</p>
+
+<p>This means you can create subscriptions to handle these events in lieu of (or in addition to) the model's defaults. For example, <code>change</code> publishes can be accessed via:</p>
+
+<pre><code data-language="javascript">Colt.subscribe("model_{MODEL-NAME}_change", function(data){
+    ...handle data...
+});
+</code></pre>
+
+<p>Sync uses a similar publisher:</p>
+
+<pre><code data-language="javascript">Colt.subscribe("model_{MODEL-NAME}_sync", function(response){
+    ...handle response...
+});
+</code></pre>
+
+<p>Both handlers return the same data as the default <code>onchange</code> and <code>onsync</code>. For more information on the Colt pub/sub system, see <a href="#pub-sub">the Pub/Sub section.</a></p>
+
+<strong>Helpful Tip</strong>
+<br>
+<p>During development you can access the full list of available models via the <code>Colt.models</code> object.</p>
+
 <a name="utils-dependencies"></a>
 <hr>
 <h2>Dependencies / Utils</h2>
@@ -331,100 +517,35 @@ the event.</p>
 
 <pre><code data-language="javascript">Colt.ajax({ url: 'path/to/resource' });</code></pre>
 
-<a name="templates"></a>
-<hr>
-<h2>Templates &amp; Rendering</h2>
+<h3>Pre-Defined Requests</h3>
 
-<p>Templates should be placed in the <code>/templates</code> directory and given the same file name as the module and use the <code>.tpl</code> extension.</p>
+<p>To assist in code reusability and maintainability, Colt includes a method for storing and calling ajax request:</p>
 
-<p>ColtJS includes basic data replacement using Mustache-style tags, for example:</p>
+<pre><code data-language="javascript">Colt.request("request_name", { ...ajax params... });</code></pre>
 
-<pre><code data-language="html">&lt;h1&gt;{{title}}&lt;/h1&gt;
-&lt;p&gt;{{content}}&lt;/p&gt;
-</code></pre>
+<p>The above would create a pre-defined request with the ajax params specified, this could then be called with:</p>
 
-<p>If another templating engine is required, simply pass it into the <code>main.js</code> file, then replace the render function. For example, using <a href="https://github.com/janl/mustache.js">MustacheJS</a>:</p>
+<pre><code data-language="javascript">Colt.request("request_name").call({ ...data... });</code></pre>
 
-<pre><code data-language="javascript">require.config({
-    baseUrl: "js/",
-    paths: {
-        colt:       'libs/colt',
-        mustache:   'libs/mustache'
+<p>The above would call the request and pass in the supplied data. The <code>call()</code> method also (optionally) accepts custom <code>success</code> and <code>error</code> paramters:</p>
+
+<pre><code data-language="javascript">Colt.request("request_name").call(
+    { ...data... }, 
+    function(returnData) {
+        ...custom success handler...
+    },
+    function(errorData) {
+        ...custom error handler...
     }
-});
+);</code></pre>
 
-define(['colt','mustache'], function (Colt,Mustache) {
+<p>Requests which are no longer used can be removed via:</p>
 
-    // Define all of the modules
-    Colt.modules = [
-        'modules/module_name',
-        ...additional modules...
-    ];
+<pre><code data-language="javascript">Colt.request("request_name", null);</pre></code>
 
-    // Define custom render to use Mustache
-    Colt.render = function (scope,data) {
-        var template = scope.template,
-            rendered = Mustache.render(template,data);
-
-        // Render to DOM
-        document.getElementById(scope.mid).innerHTML = rendered;
-        document.getElementById(scope.mid).style.display = "block";
-
-        // Build Event Listeners
-        this.delegateEvents(scope.events, scope);
-    };
-
-    // Initialize application 
-    Colt.init(); 
-
-});
-</code></pre>
-
-<p>Colt also has an <code>unrender</code> method which is used to remove unused modules. If, for instance, custom transitions were being used this could be modified similar to the above Mustache example to 
-    act on the module during this process:
-</p>
-
-<pre><code data-language="javascript">require.config({
-    baseUrl: "js/",
-    paths: {
-        colt:       'libs/colt',
-        jquery:     'libs/jquery'
-    }
-});
-
-define(['colt','jquery'], function (Colt,$) {
-
-    // Define all of the modules
-    Colt.modules = [
-        'modules/module_name',
-        ...additional modules...
-    ];
-    
-    // Define custom render to use transition in...
-    Colt.render = function (scope, data) {
-        var template = scope.template,
-        // Replace any mustache-style {{VAR}}'s
-        rendered = template.replace(/\{\{([^}]+)\}\}/g, function (i, match) {
-            return data[match];
-        });
-
-        // Render to DOM & Show Element
-        $('#'+scope.mid).fadeIn(300);
-
-        // Build Event Listeners
-        this.delegateEvents(scope.events, scope);
-    }
-
-    // Define custom unrender to use transition out...
-    Colt.unrender = function (module_name) {
-        $('#'+module_name).fadeOut(300);
-    };
-
-    // Initialize application 
-    Colt.init(); 
-
-});
-</code></pre>
+<strong>Helpful Tip</strong>
+<br>
+<p>During development you can access the full list of available requests via the <code>Colt.requests</code> object.</p>
 
 <a name="persistent-storage"></a>
 <hr>
