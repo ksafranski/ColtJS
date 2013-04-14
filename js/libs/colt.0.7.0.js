@@ -1,7 +1,7 @@
 /**
  * ColtJS Framework
  *
- * @version 0.5.1
+ * @version 0.7.0
  * @license MIT-License <http://opensource.org/licenses/MIT>
  *
  * Copyright (c) 2013 ColtJS
@@ -53,6 +53,18 @@ define(function () {
          * @type {Object}
          */
         dependencies: {},
+        
+        /**
+         * Container for all models
+         * @type {Object}
+         */
+        models: {},
+        
+        /**
+         * Container for all defined xhr requests
+         * @type {Object}
+         */
+        requests: {},
 
         /**
          * @method init
@@ -475,6 +487,271 @@ define(function () {
                 });
             }
         },
+        
+        /**
+         * @method model
+         * 
+         * Allows for local API model create, read, and delete
+         * 
+         * @param {String} name The name of the model
+         * @param {Object} [data] Contents of the model, blank to return, 'null' to clear
+         * 
+         * Specify a object value to `set`, none to `get`, and 'null' to `clear`
+         */
+        model: function () {
+            
+            var name,
+                model,
+                params;
+            
+            // If first argument is an object, create model
+            if (typeof arguments[0] === "object") {
+                
+                params = arguments[0];
+                
+                // Check optional parameters
+                params.url = params.url || false;
+                params.onchange = params.onchange || false;
+                
+                // Core properties
+                if(typeof params.name === "string" && params.name !== "") {
+                    this.models[params.name] = {
+                        data: params.data,
+                        // Define save method, ex: Colt.model('some_model').get();
+                        "get": this.sync.bind(this, params.name, "GET"),
+                        // Define get method, ex: Colt.model('some_model').put();
+                        "put": this.sync.bind(this, params.name, "PUT"),
+                        // Define post method, ex: Colt.model('some_model').post();
+                        "post": this.sync.bind(this, params.name, "POST"),
+                        // Define delete method, ex: Colt.model('some_model').delete;
+                        "delete": this.sync.bind(this, params.name, "DELETE")
+                    };
+                    
+                    // If URL of endpoint supplied, set property
+                    if (params.url) {
+                        this.models[params.name].url = params.url;
+                    }
+                    
+                    // If onchange fn is specified, set as property
+                    if (params.onchange) {
+                        this.models[params.name].onchange = params.onchange;
+                    }
+                    
+                    // If onsync fn is specified, set as property
+                    if (params.onsync) {
+                        this.models[params.name].onsync = params.onsync;
+                    }
+                    
+                    // Return the model
+                    return this.models[params.name];
+                    
+                } else {
+                    console.error("CAN NOT CREATE NULL MODEL");
+                }
+            
+            // Modify existing object
+            } else if (arguments.length===2) {
+                
+                name = arguments[0];
+                model = this.models[name];
+                
+                // Modify data
+                if (typeof arguments[1] === "object" && arguments[1]!==null) {
+                    model.data = arguments[1];
+                    
+                    // Fire onchange
+                    if (model.hasOwnProperty("onchange")) {
+                        model.onchange(model.data);
+                    }
+                    
+                    // Publish for any subscriptions
+                    this.publish("model_"+name+"_change", model.data);
+                        
+                // Delete model
+                } else {
+                    delete this.models[name];
+                }
+                
+            
+            // Return model
+            } else {
+                name = arguments[0];
+                model = this.models[name];
+                return model;
+            }
+
+        },
+        
+        /**
+         * @method sync
+         * 
+         * Gets bound to models, used to access API
+         * 
+         * @param {String} name Name of the model
+         * @param {String} method RESTful request method
+         */
+        
+        sync: function (name, method){
+            
+            var model = this.models[name],
+                sendback = {};
+            
+            // Define call
+            var _this = this,
+                url = this.parseURL(model.url, model.data),
+                data = model.data,
+                syncParams = {
+                    url: url,
+                    type: method,
+                    data: data,
+                    qsData: false,
+                    success: function(returnData){
+                        
+                        // Set sendback
+                        sendback.status = "success";
+                        sendback.data = returnData;
+                        
+                        // On GET success, Update model data
+                        if (method==="GET") {
+                            _this.model(name,JSON.parse(returnData));
+                        }
+                        
+                        // On DELETE success, Remove model
+                        if (method==="DELETE") {
+                            _this.model(name,null);
+                        }
+                        
+                        // Fire onsync if present
+                        if (model.hasOwnProperty("onsync")) {
+                            model.onsync(sendback);
+                        }
+                        
+                        // Publish for any subscriptions
+                        _this.publish("model_"+name+"_sync", sendback);
+                    },
+                    error: function(req){
+                        
+                        // Set sendback
+                        sendback.status = "error";
+                        sendback.data = req;
+                        
+                        // Fire onsync if present
+                        if (model.hasOwnProperty("onsync")) {
+                            model.onsync(sendback);
+                        }
+                        
+                        // Publish for any subscriptions
+                        _this.publish("model_"+name+"_sync", sendback);
+                        
+                        // Drop error bomb
+                        console.error("MODEL SYNC ERROR: ", req);
+                    }
+                };
+                
+            // Call the ajax function
+            this.ajax(syncParams);
+        },
+        
+        /**
+         * @method request
+         * 
+         * Allows for storing pre-set xhr requests for re-use
+         * 
+         * @param {String} name The name of the xhr-request
+         * @param {Object} params Paramaters of the request to define (see @method ajax)
+         */
+        request: function (name, params) {
+
+            // If value is detected, set new or modify request
+            if (typeof params === "object" && params !== null) {
+                // Stringify objects
+                this.requests[name] = {
+                    // Connection parameters
+                    params: params,
+                    // Define call method, ex: Colt.request("some_request").call(data);
+                    call: this.callRequest.bind(this, name)
+                };
+                
+                // Return the request for variable assignment
+                return this.requests[name];
+                
+            }
+            
+            // No params supplied, return request
+            if (typeof data === "undefined") {
+                return this.requests[name];
+            }
+
+            // Null specified, remove request
+            if (params === null) {
+                if (this.requests.hasOwnProperty(name)) {
+                    delete this.requests[name];
+                }
+            }
+
+        },
+        
+        /**
+         * @method callRequest
+         * 
+         * Fires a stored request via ajax() method
+         * 
+         * @param {String} name The name passed from the bind, or manually supplied
+         * @param {Object} data The data to be sent with the request
+         * @param {Function} [success] Optional success callback, can also be specified in request params
+         * @param {Function} [error] Optional error callback, can also be specified in request params
+         */
+        callRequest: function (name, data, success, error) {
+            
+            var request = {};
+            
+            // Check for optional success and error callbacks
+            success = success || false;
+            error = error || false;
+            
+            if (this.requests.hasOwnProperty(name)) {
+                
+                // We have to loop the request's params into the new request object
+                // so we don't override the requests settings
+                for (var param in this.requests[name].params) {
+                    request[param] = this.requests[name].params[param];    
+                }
+
+                // Parse any URL data
+                request.url = this.parseURL(request.url, data);
+                
+                // Set the data param
+                request.data = data;
+                
+                // Check for success callback
+                if (success && typeof success==="function") {
+                    request.success = success;
+                }
+                
+                // Check for error callback
+                if (error && typeof error==="function") {
+                    request.error = error;
+                }
+                
+                // Call the ajax request
+                this.ajax(request);
+                
+            }
+        },
+        
+        /**
+         * @method parseURL
+         * 
+         * Parses model's url property against data object
+         * 
+         * @param {String} url The url of the model
+         * @param {Object} data Contents of the model
+         */
+        parseURL: function (url, data) {
+            return url.replace(/\{([^}]+)\}/g, function (i, match) {
+                return data[match];
+            });
+        },
 
         /**
          * @method ajax
@@ -499,6 +776,8 @@ define(function () {
          * `success`: Function called on successful request
          * 
          * `error`: Function called on failure of request
+         * 
+         * `qsData`: Allows blocking (set `false`) of `data` add to URL for RESTful requests
          */
 
         ajax: function() {
@@ -515,18 +794,18 @@ define(function () {
                 xhr = arguments[1];
                 // Add first argument to xhr object as url
                 xhr.url = arguments[0];
-            }
-        
+            }        
         
             // Parameters & Defaults
             xhr.request = false;
             xhr.type = xhr.type || "GET";
             xhr.data = xhr.data || null;
+            if (xhr.qsData || !xhr.hasOwnProperty("qsData")) { xhr.qsData = true; } else { xhr.qsData = false; }
             if (xhr.cache || !xhr.hasOwnProperty("cache")) { xhr.cache = true; } else { xhr.cache = false; }
             if (xhr.async || !xhr.hasOwnProperty("async")) { xhr.async = true; } else { xhr.async = false; }
             if (xhr.success && typeof xhr.success === "function") { xhr.success = xhr.success; } else { xhr.success = false; }
             if (xhr.error && typeof xhr.error === "function") { xhr.error = xhr.error; } else { xhr.error = false; }
-        
+            
             // Format xhr.data & encode values
             if (xhr.data) {
                 var param_count = 0,
@@ -559,7 +838,7 @@ define(function () {
             }
         
             // Handle xhr.data on GET request type
-            if (xhr.data && xhr.type.toUpperCase() === "GET") {
+            if (xhr.data && xhr.type.toUpperCase() === "GET" && xhr.qsData) {
                 formatURL(xhr.data);
             }
         
@@ -601,7 +880,7 @@ define(function () {
             xhr.request.open(xhr.type, xhr.url, xhr.async);
         
             // Set request header for POST
-            if (xhr.type.toUpperCase() === "POST") {
+            if (xhr.type.toUpperCase() === "POST" || xhr.type.toUpperCase() === "PUT") {
                 xhr.request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             }
         
@@ -631,6 +910,11 @@ define(function () {
 
             // If value is detected, set new or modify store
             if (typeof value !== "undefined" && value !== null) {
+                // Stringify objects
+                if(typeof value === "object") {
+                    value = JSON.stringify(value);
+                }
+                // Add to / modify storage
                 if (lsSupport) { // Native support
                     localStorage.setItem(key, value);
                 } else { // Use Cookie

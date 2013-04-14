@@ -1,7 +1,7 @@
 require.config({
     baseUrl: "js/",
     paths: {
-        colt:  "libs/colt.0.5.1"
+        colt:  "libs/colt.0.7.0"
     }
 });
 
@@ -9,7 +9,7 @@ define(["colt"], function (Colt) {
 
     // Define all of the modules as array
     Colt.modules = [
-        "modules/helloworld"
+        "views/helloworld"
     ];
 
     // Initialize application
