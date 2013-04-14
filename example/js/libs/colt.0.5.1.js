@@ -514,7 +514,7 @@ define(function () {
                 params.onchange = params.onchange || false;
                 
                 // Core properties
-                if(typeof params.name === 'string' && params.name !== '') {
+                if(typeof params.name === "string" && params.name !== "") {
                     this.models[params.name] = {
                         data: params.data,
                         // Define save method, ex: Colt.model('some_model').get();
@@ -613,18 +613,18 @@ define(function () {
                         }
                         
                         // Fire onsync if present
-                        if (model.hasOwnProperty('onsync')) {
+                        if (model.hasOwnProperty("onsync")) {
                             model.onsync({ status: "success", data: returnData });
                         }
                     },
                     error: function(req){
                         // Fire onsync if present
-                        if (model.hasOwnProperty('onsync')) {
+                        if (model.hasOwnProperty("onsync")) {
                             model.onsync({ status: "error", data: req });
                         }
                         
                         // Drop error bomb
-                        console.error('MODEL SYNC ERROR: ', req);
+                        console.error("MODEL SYNC ERROR: ", req);
                     }
                 };
                 
@@ -704,12 +704,12 @@ define(function () {
                 request.data = data;
                 
                 // Check for success callback
-                if (success && typeof success==='function') {
+                if (success && typeof success==="function") {
                     request.success = success;
                 }
                 
                 // Check for error callback
-                if (error && typeof error==='function') {
+                if (error && typeof error==="function") {
                     request.error = error;
                 }
                 
