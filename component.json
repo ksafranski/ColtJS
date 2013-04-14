@@ -1,6 +1,6 @@
 {
   "name": "ColtJS",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "main": "colt.min.js",
   "dependencies": {
     "requirejs": "~2"
