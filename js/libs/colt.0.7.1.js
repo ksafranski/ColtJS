@@ -1,7 +1,7 @@
 /**
  * ColtJS Framework
  *
- * @version 0.7.0
+ * @version 0.7.1
  * @license MIT-License <http://opensource.org/licenses/MIT>
  *
  * Copyright (c) 2013 ColtJS
@@ -1025,10 +1025,21 @@ define(function () {
          * @param {Function} fn Function to be called
          */
         subscribe: function (topic, fn) {
-            var id = ++this.topic_id;
+            var id = ++this.topic_id,
+                i=0, z;
+            
+            // Create new topic
             if (!this.topics[topic]) {
                 this.topics[topic] = [];
             }
+            
+            // Prevent re-subscribe issues (common on route-reload)
+            for (i, z=this.topics[topic].length; i<z; i++) {
+                if (this.topics[topic][i].fn.toString()===fn.toString()){
+                    return this.topics[topic][i].id;
+                }
+            }
+            
             this.topics[topic].push({
                 id: id,
                 fn: fn
