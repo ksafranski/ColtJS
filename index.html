@@ -310,7 +310,15 @@ define(['colt','jquery'], function (Colt,$) {
 
 <p>With only the name specified, the model is returned. It's data can be accessed by appending <code>.data</code> to the variable assignment, or via:
 
-<pre><code data-language="javascript">Colt.model("model_name").data;</code></pre>
+<pre><code data-language="javascript">// Returns the full model
+Colt.model("model_name");
+// Returns model data
+Colt.model("model_name").data();
+</code></pre>
+
+<p>The model's data can be changed via:</p>
+
+<pre><code data-language="javascript">Colt.model("model_name", { ...data object });</code></pre>
 
 <p>The model can then be removed by providing <code>null</code> for the <code>data</code> parameter:</p>
 
