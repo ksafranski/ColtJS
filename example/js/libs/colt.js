@@ -1,7 +1,7 @@
 /**
  * ColtJS Framework
  *
- * @version 0.7.2
+ * @version 0.7.3
  * @license MIT-License <http://opensource.org/licenses/MIT>
  *
  * Copyright (c) 2013 ColtJS
@@ -147,10 +147,12 @@ define(function () {
          * @param {String} fragment The current hash
          */
         loadUrl: function (fragment) {
-            var el_lock,
+            var _this = this,
+                el_lock,
                 module_name,
                 querystring = false,
                 i, max,
+                bits,
                 url_data = {};
 
             // Break apart fragment
@@ -179,23 +181,23 @@ define(function () {
             if (querystring) {
                 var qs_data = querystring.split("&");
                 for (i = 0, max = qs_data.length; i < max; i++) {
-                    var bits = qs_data[i].split("=");
+                    bits = qs_data[i].split("=");
                     url_data[bits[0]] = bits[1];
                 }
             }
 
             // Store current route
-            this.current_route = fragment[0];
+            _this.current_route = fragment[0];
 
             // Store url data
-            this.url_data = url_data;
+            _this.url_data = url_data;
 
             // Check route for match(es)
-            for (var route in this.routes) {
-                if (this.routes.hasOwnProperty(route)) {
-                    for (var _i = 0, _max = this.routes[route].length; _i < _max; _i++) {
+            for (var route in _this.routes) {
+                if (_this.routes.hasOwnProperty(route)) {
+                    for (var _i = 0, _max = _this.routes[route].length; _i < _max; _i++) {
                         // Get Name
-                        module_name = this.routes[route][_i][0];
+                        module_name = _this.routes[route][_i][0];
 
                         // Check route for match
                         if (fragment[0] === route || route === "*") {
@@ -204,12 +206,12 @@ define(function () {
                                 // Prevents other routes in the same module from hiding this
                                 el_lock = module_name;
                                 // Send module to processor
-                                this.processor(module_name, this.routes[route][_i][1], url_data);
+                                _this.processor(module_name, _this.routes[route][_i][1], url_data);
                             }
 
                         } else {
                             // Clear & Hide sections that don't exist in current route
-                            this.unrender(module_name);
+                            _this.unrender(module_name);
                         }
                     }
                 }
@@ -237,7 +239,8 @@ define(function () {
             // Check to see if we are using inline template or if template has already been loaded/defined
             if (!scope.hasOwnProperty("template")) {
                 
-                this.ajax({
+                // Get the template
+                _this.ajax({
                     url: "templates/" + scope.mid + ".tpl",
                     type: "GET",
                     success: function(data) {
@@ -329,7 +332,8 @@ define(function () {
          * @param {Object} [data] Any data to be rendered onto the template.
          */
         render: function (scope, data) {
-            var template = scope.template,
+            var _this = this,
+                template = scope.template,
                 // Get element
                 el = document.getElementById(scope.mid),
                 // Replace any mustache-style {{VAR}}'s
@@ -342,7 +346,7 @@ define(function () {
             el.style.display = "block";
 
             // Build Event Listeners
-            this.delegateEvents(scope.events, scope);
+            _this.delegateEvents(scope.events, scope);
         },
         
         /**
@@ -500,7 +504,8 @@ define(function () {
          */
         model: function () {
             
-            var name,
+            var _this = this,
+                name,
                 model,
                 params;
             
@@ -515,35 +520,35 @@ define(function () {
                 
                 // Core properties
                 if(typeof params.name === "string" && params.name !== "") {
-                    this.models[params.name] = {
+                    _this.models[params.name] = {
                         data: params.data,
                         // Define save method, ex: Colt.model('some_model').get();
-                        "get": this.sync.bind(this, params.name, "GET"),
+                        "get": _this.sync.bind(_this, params.name, "GET"),
                         // Define get method, ex: Colt.model('some_model').put();
-                        "put": this.sync.bind(this, params.name, "PUT"),
+                        "put": _this.sync.bind(_this, params.name, "PUT"),
                         // Define post method, ex: Colt.model('some_model').post();
-                        "post": this.sync.bind(this, params.name, "POST"),
+                        "post": _this.sync.bind(_this, params.name, "POST"),
                         // Define delete method, ex: Colt.model('some_model').delete;
-                        "delete": this.sync.bind(this, params.name, "DELETE")
+                        "delete": _this.sync.bind(_this, params.name, "DELETE")
                     };
                     
                     // If URL of endpoint supplied, set property
                     if (params.url) {
-                        this.models[params.name].url = params.url;
+                        _this.models[params.name].url = params.url;
                     }
                     
                     // If onchange fn is specified, set as property
                     if (params.onchange) {
-                        this.models[params.name].onchange = params.onchange;
+                        _this.models[params.name].onchange = params.onchange;
                     }
                     
                     // If onsync fn is specified, set as property
                     if (params.onsync) {
-                        this.models[params.name].onsync = params.onsync;
+                        _this.models[params.name].onsync = params.onsync;
                     }
                     
                     // Return the model
-                    return this.models[params.name];
+                    return _this.models[params.name];
                     
                 } else {
                     console.error("CAN NOT CREATE NULL MODEL");
@@ -553,7 +558,7 @@ define(function () {
             } else if (arguments.length===2) {
                 
                 name = arguments[0];
-                model = this.models[name];
+                model = _this.models[name];
                 
                 // Modify data
                 if (typeof arguments[1] === "object" && arguments[1]!==null) {
@@ -565,18 +570,18 @@ define(function () {
                     }
                     
                     // Publish for any subscriptions
-                    this.publish("model_"+name+"_change", model.data);
+                    _this.publish("model_"+name+"_change", model.data);
                         
                 // Delete model
                 } else {
-                    delete this.models[name];
+                    delete _this.models[name];
                 }
                 
             
             // Return model
             } else {
                 name = arguments[0];
-                model = this.models[name];
+                model = _this.models[name];
                 return model;
             }
 
@@ -649,7 +654,7 @@ define(function () {
                 };
                 
             // Call the ajax function
-            this.ajax(syncParams);
+            _this.ajax(syncParams);
         },
         
         /**
@@ -661,31 +666,33 @@ define(function () {
          * @param {Object} params Paramaters of the request to define (see @method ajax)
          */
         request: function (name, params) {
+            
+            var _this = this;
 
             // If value is detected, set new or modify request
             if (typeof params === "object" && params !== null) {
                 // Stringify objects
-                this.requests[name] = {
+                _this.requests[name] = {
                     // Connection parameters
                     params: params,
                     // Define call method, ex: Colt.request("some_request").call(data);
-                    call: this.callRequest.bind(this, name)
+                    call: _this.callRequest.bind(_this, name)
                 };
                 
                 // Return the request for variable assignment
-                return this.requests[name];
+                return _this.requests[name];
                 
             }
             
             // No params supplied, return request
             if (typeof data === "undefined") {
-                return this.requests[name];
+                return _this.requests[name];
             }
 
             // Null specified, remove request
             if (params === null) {
-                if (this.requests.hasOwnProperty(name)) {
-                    delete this.requests[name];
+                if (_this.requests.hasOwnProperty(name)) {
+                    delete _this.requests[name];
                 }
             }
 
@@ -703,22 +710,23 @@ define(function () {
          */
         callRequest: function (name, data, success, error) {
             
-            var request = {};
+            var _this = this,
+                request = {};
             
             // Check for optional success and error callbacks
             success = success || false;
             error = error || false;
             
-            if (this.requests.hasOwnProperty(name)) {
+            if (_this.requests.hasOwnProperty(name)) {
                 
                 // We have to loop the request's params into the new request object
                 // so we don't override the requests settings
-                for (var param in this.requests[name].params) {
-                    request[param] = this.requests[name].params[param];    
+                for (var param in _this.requests[name].params) {
+                    request[param] = _this.requests[name].params[param];    
                 }
 
                 // Parse any URL data
-                request.url = this.parseURL(request.url, data);
+                request.url = _this.parseURL(request.url, data);
                 
                 // Set the data param
                 request.data = data;
@@ -734,7 +742,7 @@ define(function () {
                 }
                 
                 // Call the ajax request
-                this.ajax(request);
+                _this.ajax(request);
                 
             }
         },
@@ -901,7 +909,8 @@ define(function () {
          */
         store: function (key, value) {
 
-            var lsSupport = false;
+            var _this = this,
+                lsSupport = false;
 
             // Check for native support
             if (localStorage) {
@@ -918,7 +927,7 @@ define(function () {
                 if (lsSupport) { // Native support
                     localStorage.setItem(key, value);
                 } else { // Use Cookie
-                    this.createCookie(key, value, 30);
+                    _this.createCookie(key, value, 30);
                 }
             }
 
@@ -927,7 +936,7 @@ define(function () {
                 if (lsSupport) { // Native support
                     return localStorage.getItem(key);
                 } else { // Use cookie
-                    return this.readCookie(key);
+                    return _this.readCookie(key);
                 }
             }
 
@@ -936,7 +945,7 @@ define(function () {
                 if (lsSupport) { // Native support
                     localStorage.removeItem(key);
                 } else { // Use cookie
-                    this.createCookie(key, "", -1);
+                    _this.createCookie(key, "", -1);
                 }
             }
 
@@ -996,7 +1005,7 @@ define(function () {
          */
         publish: function (topic, args) {
             var _this = this;
-            if (!this.topics.hasOwnProperty(topic)) {
+            if (!_this.topics.hasOwnProperty(topic)) {
                 return false;
             }
             setTimeout(function () {
@@ -1025,22 +1034,23 @@ define(function () {
          * @param {Function} fn Function to be called
          */
         subscribe: function (topic, fn) {
-            var id = ++this.topic_id,
+            var _this = this,
+                id = ++this.topic_id,
                 i=0, z;
             
             // Create new topic
-            if (!this.topics[topic]) {
-                this.topics[topic] = [];
+            if (!_this.topics[topic]) {
+                _this.topics[topic] = [];
             }
             
             // Prevent re-subscribe issues (common on route-reload)
-            for (i, z=this.topics[topic].length; i<z; i++) {
-                if (this.topics[topic][i].fn.toString()===fn.toString()){
-                    return this.topics[topic][i].id;
+            for (i, z=_this.topics[topic].length; i<z; i++) {
+                if (_this.topics[topic][i].fn.toString()===fn.toString()){
+                    return _this.topics[topic][i].id;
                 }
             }
             
-            this.topics[topic].push({
+            _this.topics[topic].push({
                 id: id,
                 fn: fn
             });
@@ -1055,11 +1065,13 @@ define(function () {
          * @param {String} token Token of the subscription
          */
         unsubscribe: function (token) {
-            for (var topic in this.topics) {
-                if (this.topics.hasOwnProperty(topic)) {
-                    for (var i = 0, max = this.topics[topic].length; i < max; i++) {
-                        if (this.topics[topic][i].id === token) {
-                            this.topics[topic].splice(i, 1);
+            var _this = this,
+                topic;
+            for (topic in _this.topics) {
+                if (_this.topics.hasOwnProperty(topic)) {
+                    for (var i = 0, max = _this.topics[topic].length; i < max; i++) {
+                        if (_this.topics[topic][i].id === token) {
+                            _this.topics[topic].splice(i, 1);
                             return token;
                         }
                     }
