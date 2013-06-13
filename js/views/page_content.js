@@ -26,6 +26,8 @@ define(function(){
                 Rainbow.color();
                 //
                 _this.$el.hide().fadeIn(250);
+                
+                window.logHash();
             });
 
             // Set nav active route
