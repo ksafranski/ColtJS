@@ -22,4 +22,23 @@ following:</p>
 </code></pre>
 
 <p>The above will attach the <code>messages</code> object to the scope of the module for access. In the above instance the reference would be <code>this.messages</code> inside any methods of 
-the module.</p>
+the module, for example:</p>
+
+<pre><code data-language="javascript">
+        ...
+        
+        // Define key:path object for dependencies
+        dependencies: {
+            'messages': 'utils/messages'
+        },
+        
+        renderMyModule: function() {
+            
+            // Render this view/module and pass in messages for templating
+            Colt.render(this,this.messages);
+            
+        }
+        
+        ...
+
+</code></pre>
