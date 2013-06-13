@@ -25,20 +25,20 @@ following:</p>
 the module, for example:</p>
 
 <pre><code data-language="javascript">
-        ...
+    ...
+    
+    // Define key:path object for dependencies
+    dependencies: {
+        'messages': 'utils/messages'
+    },
+    
+    renderMyModule: function() {
         
-        // Define key:path object for dependencies
-        dependencies: {
-            'messages': 'utils/messages'
-        },
+        // Render this view/module and pass in messages for templating
+        Colt.render(this,this.messages);
         
-        renderMyModule: function() {
-            
-            // Render this view/module and pass in messages for templating
-            Colt.render(this,this.messages);
-            
-        }
-        
-        ...
+    }
+    
+    ...
 
 </code></pre>
