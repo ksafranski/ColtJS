@@ -24,5 +24,8 @@
   "readmeFilename": "README.md",
   "contributors": [
     "Luiz Lopes <luiz@wickeddeveloper.com> (http://wickeddeveloper.com)"
-  ]
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  }
 }
