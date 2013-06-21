@@ -1,16 +1,18 @@
 {
   "name": "ColtJS",
   "version": "0.7.3",
-  "main": "colt.min.js",
+  "main": "build/colt.min.js",
   "dependencies": {
     "requirejs": "~2"
   },
   "ignore": [
     "**/.*",
+    "src/*",
     "node_modules",
     "components",
     "docs",
     "example",
-    "tests"
+    "tests",
+    "Gruntfile.js"
   ]
 }

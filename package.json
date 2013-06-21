@@ -1,16 +1,8 @@
 {
   "name": "ColtJS",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "private": true,
   "description": "A simple, efficient, and modular JavaScript Framework.",
-  "dependencies": {
-    "uglify-js": "~2.X.X",
-    "restify": "~2.X.X",
-    "node-static": "~0.6.X"
-  },
-  "scripts": {
-    "build": "node_modules/uglifyjs/bin/uglifyjs colt.js -o colt.min.js --comments"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/Fluidbyte/ColtJS.git"
@@ -24,5 +16,10 @@
   "readmeFilename": "README.md",
   "contributors": [
     "Luiz Lopes <luiz@wickeddeveloper.com> (http://wickeddeveloper.com)"
-  ]
+  ],
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-jshint": "~0.6.0"
+  }
 }
