@@ -1,7 +1,7 @@
 /**
  * ColtJS Framework
  *
- * @version 0.7.3
+ * @version 0.7.4
  * @license MIT-License <http://opensource.org/licenses/MIT>
  *
  * Copyright (c) 2013 ColtJS
