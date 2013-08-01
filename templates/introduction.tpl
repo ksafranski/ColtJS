@@ -11,7 +11,7 @@
 
 <hr><h3>Get Hands-On</h3>
 
-<p>If you're like most dev's hands-on is the best way to get up-to-speed. I highly suggest <a href="https://github.com/Fluidbyte/ColtJS/tree/master/demo">downloading or digging through the demo</a>. It's a very simple 
+<p>If you're like most dev's hands-on is the best way to get up-to-speed. I highly suggest <a href="https://github.com/Fluidbyte/ColtJS/tree/master/example">downloading or digging through the demo</a>. It's a very simple 
     implementation which can easily be adapted as a starting point for a project and outlines the core functionality and usage of the ColtJS framework.
 </p>
 
