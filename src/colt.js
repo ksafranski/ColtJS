@@ -90,10 +90,10 @@ define(function () {
                     // Add module-id to scope
                     _this.scope[module].mid = module;
                     // Create element reference
-                    _this.scope[module].el = document.getElementById(module);
+                    _this.scope[module].el = document.querySelector("[data-view='" + module + "']");
                     // If jQuery is available create jQuery accessible DOM reference
                     if (typeof jQuery !== "undefined") {
-                        _this.scope[module].$el = jQuery("#" + module);
+                        _this.scope[module].$el = jQuery("[data-view='" + module + "']");
                     }
                 }
 

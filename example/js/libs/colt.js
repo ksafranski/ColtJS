@@ -1,7 +1,7 @@
 /**
  * ColtJS Framework
  *
- * @version 0.7.3
+ * @version 0.7.4
  * @license MIT-License <http://opensource.org/licenses/MIT>
  *
  * Copyright (c) 2013 ColtJS
@@ -74,7 +74,9 @@ define(function () {
         init: function () {
 
             var module,
-                _this = this;
+                _this = this,
+                i,
+                max;
 
             // Make available in global scope
             window.Colt = this;
@@ -82,16 +84,16 @@ define(function () {
             require(this.modules, function () {
 
                 // Load modules into application scope
-                for (var i = 0, max = arguments.length; i < max; i++) {
+                for (i = 0, max = arguments.length; i < max; i++) {
                     module = _this.modules[i].split("/").pop();
                     _this.scope[module] = arguments[i];
                     // Add module-id to scope
                     _this.scope[module].mid = module;
                     // Create element reference
-                    _this.scope[module].el = document.getElementById(module);
+                    _this.scope[module].el = document.querySelector("[data-view='" + module + "']");
                     // If jQuery is available create jQuery accessible DOM reference
                     if (typeof jQuery !== "undefined") {
-                        _this.scope[module].$el = jQuery("#" + module);
+                        _this.scope[module].$el = jQuery("[data-view='" + module + "']");
                     }
                 }
 
@@ -115,11 +117,13 @@ define(function () {
         router: function () {
 
             var cur_route = window.location.hash,
-                _this = this;
+                _this = this,
+                module,
+                route;
 
-            for (var module in this.scope) {
+            for (module in this.scope) {
                 if (this.scope.hasOwnProperty(module)) {
-                    for (var route in this.scope[module].routes) {
+                    for (route in this.scope[module].routes) {
                         if (!this.routes.hasOwnProperty(route)) {
                             this.routes[route] = [[module, this.scope[module].routes[route]]];
                         } else {
@@ -151,7 +155,10 @@ define(function () {
                 el_lock,
                 module_name,
                 querystring = false,
-                i, max,
+                i,
+                max,
+                _i,
+                _max,
                 bits,
                 url_data = {};
 
@@ -172,7 +179,7 @@ define(function () {
             // Check for URL Data - Slash delimited
             fragment = fragment[0].split("/");
             if(fragment.length > 0) {
-                for (i = 1, max = fragment.length; i<max; i++) {
+                for (i = 1, max = fragment.length; i < max; i++) {
                     url_data[i-1] = fragment[i];
                 }
             }
@@ -195,7 +202,7 @@ define(function () {
             // Check route for match(es)
             for (var route in _this.routes) {
                 if (_this.routes.hasOwnProperty(route)) {
-                    for (var _i = 0, _max = _this.routes[route].length; _i < _max; _i++) {
+                    for (_i = 0, _max = _this.routes[route].length; _i < _max; _i++) {
                         // Get Name
                         module_name = _this.routes[route][_i][0];
 
@@ -243,20 +250,20 @@ define(function () {
                 _this.ajax({
                     url: "templates/" + scope.mid + ".tpl",
                     type: "GET",
-                    success: function(data) {
+                    success: function (data) {
                         scope.template = data;
-                        _this.loadDependencies(scope,function(){
+                        _this.loadDependencies(scope, function () {
                             // Run route after deps are loaded
                             scope[route_fn](url_data);
                         });
                     },
-                    error: function(){
-                        console.error("Error Loading " + scope.mid + ".tpl");
+                    error: function () {
+                        throw new Error("Error Loading" + scope.mid + ".tpl");
                     }
                 });
 
             } else {
-                _this.loadDependencies(scope,function(){
+                _this.loadDependencies(scope, function () {
                     // Run route after deps are loaded
                     scope[route_fn](url_data);
                 });
@@ -272,8 +279,11 @@ define(function () {
          * @param {Object} scope The module object to be used.
          * @param {Function} callback Function to execute when all deps are loaded
          */
-        loadDependencies: function(scope, callback) {
+        loadDependencies: function (scope, callback) {
             var _this = this,
+                i,
+                max,
+                dep,
                 dep_name,
                 dep_src,
                 arr_dep_name = [],
@@ -283,7 +293,7 @@ define(function () {
             if (scope.hasOwnProperty("dependencies")) {
 
                 // Build Dependency Arrays
-                for (var dep in scope.dependencies) {
+                for (dep in scope.dependencies) {
                     if (scope.dependencies.hasOwnProperty(dep)) {
                         dep_name = dep;
                         dep_src = scope.dependencies[dep];
@@ -302,7 +312,7 @@ define(function () {
 
                 // Load deps and add to object
                 require(arr_dep_src, function () {
-                    for (var i = 0, max = arguments.length; i < max; i++) {
+                    for (i = 0, max = arguments.length; i < max; i++) {
                         scope[arr_dep_name[i]] = arguments[i];
 
                         // Store in globally accessible dependencies object
@@ -356,7 +366,7 @@ define(function () {
          * 
          * @param {String} module_name The name of the module to unrender
          */
-        unrender: function(module_name){
+        unrender: function (module_name) {
             document.getElementById(module_name).innerHTML = "";
             document.getElementById(module_name).style.display = "none";
         },
@@ -374,7 +384,7 @@ define(function () {
                 scope = this.scope[module];
             if (!scope.hasOwnProperty("loaded")) {
                 // Not previously loaded, check for dependencies
-                _this.loadDependencies(scope,function(scope) {
+                _this.loadDependencies(scope, function (scope) {
                     scope.loaded = true;
                     if (callback && typeof callback === "function") {
                         callback(scope);
@@ -404,7 +414,7 @@ define(function () {
                 url;
             
             // Handle url composition
-            if(fragment.length) {
+            if (fragment.length) {
                 // Fragment exists
                 url = root + location.search + "#!/" + fragment;
             } else {
@@ -414,7 +424,7 @@ define(function () {
 
             if (history.pushState) {
                 // Browser supports pushState()
-                history.pushState(null,document.title, url);
+                history.pushState(null, document.title, url);
                 _this.loadUrl(fragment);
             } else {
                 // Older browser fallback
@@ -422,7 +432,6 @@ define(function () {
             }
 
             return true;
-
         },
 
         /**
@@ -435,12 +444,15 @@ define(function () {
          */
         delegateEvents: function (events, scope) {
 
-            var method,
+            var _this = this,
+                method,
                 match,
                 event_name,
                 selector,
                 nodes,
-                _this = this;
+                key,
+                max,
+                i;
 
             // if there are no events on this sectional then we move on
             if (!events) {
@@ -448,7 +460,7 @@ define(function () {
             }
 
             var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-            for (var key in events) {
+            for (key in events) {
                 if (events.hasOwnProperty(key)) {
                     method = events[key];
                     match = key.match(delegateEventSplitter);
@@ -460,7 +472,7 @@ define(function () {
                      */
                     nodes = document.querySelectorAll("#" + scope.mid + " " + selector);
 
-                    for (var i = 0, max = nodes.length; i < max; i++) {
+                    for (i = 0, max = nodes.length; i < max; i++) {
                         _this.bindEvent(nodes[i], event_name, scope[method].bind(scope), true);
                     }
                 }
@@ -551,17 +563,17 @@ define(function () {
                     return _this.models[params.name];
                     
                 } else {
-                    console.error("CAN NOT CREATE NULL MODEL");
+                    throw new Error("Cannot create a null model");
                 }
             
             // Modify existing object
-            } else if (arguments.length===2) {
+            } else if (arguments.length === 2) {
                 
                 name = arguments[0];
                 model = _this.models[name];
                 
                 // Modify data
-                if (typeof arguments[1] === "object" && arguments[1]!==null) {
+                if (typeof arguments[1] === "object" && arguments[1] !== null) {
                     model.data = arguments[1];
                     
                     // Fire onchange
@@ -596,7 +608,7 @@ define(function () {
          * @param {String} method RESTful request method
          */
         
-        sync: function (name, method){
+        sync: function (name, method) {
             
             var model = this.models[name],
                 sendback = {};
@@ -610,19 +622,19 @@ define(function () {
                     type: method,
                     data: data,
                     qsData: false,
-                    success: function(returnData){
+                    success: function (returnData ){
                         
                         // Set sendback
                         sendback.status = "success";
                         sendback.data = returnData;
                         
                         // On GET success, Update model data
-                        if (method==="GET") {
+                        if (method === "GET") {
                             _this.model(name,JSON.parse(returnData));
                         }
                         
                         // On DELETE success, Remove model
-                        if (method==="DELETE") {
+                        if (method === "DELETE") {
                             _this.model(name,null);
                         }
                         
@@ -634,7 +646,7 @@ define(function () {
                         // Publish for any subscriptions
                         _this.publish("model_"+name+"_sync", sendback);
                     },
-                    error: function(req){
+                    error: function (req) {
                         
                         // Set sendback
                         sendback.status = "error";
@@ -649,7 +661,7 @@ define(function () {
                         _this.publish("model_"+name+"_sync", sendback);
                         
                         // Drop error bomb
-                        console.error("MODEL SYNC ERROR: ", req);
+                        throw new Error("Model Sync Error: [req] : " + req);
                     }
                 };
                 
@@ -711,7 +723,8 @@ define(function () {
         callRequest: function (name, data, success, error) {
             
             var _this = this,
-                request = {};
+                request = {},
+                param;
             
             // Check for optional success and error callbacks
             success = success || false;
@@ -721,7 +734,7 @@ define(function () {
                 
                 // We have to loop the request's params into the new request object
                 // so we don't override the requests settings
-                for (var param in _this.requests[name].params) {
+                for (param in _this.requests[name].params) {
                     request[param] = _this.requests[name].params[param];    
                 }
 
@@ -732,12 +745,12 @@ define(function () {
                 request.data = data;
                 
                 // Check for success callback
-                if (success && typeof success==="function") {
+                if (success && typeof success === "function") {
                     request.success = success;
                 }
                 
                 // Check for error callback
-                if (error && typeof error==="function") {
+                if (error && typeof error === "function") {
                     request.error = error;
                 }
                 
@@ -787,7 +800,6 @@ define(function () {
          * 
          * `qsData`: Allows blocking (set `false`) of `data` add to URL for RESTful requests
          */
-
         ajax: function() {
 
             // Parent object for all parameters
@@ -976,9 +988,12 @@ define(function () {
          */
         readCookie: function(key) {
             var nameEQ = key + "=",
-                ca = document.cookie.split(";");
-            for (var i = 0, max = ca.length; i < max; i++) {
-                var c = ca[i];
+                ca = document.cookie.split(";"),
+                i,
+                max,
+                c;
+            for (i = 0, max = ca.length; i < max; i++) {
+                c = ca[i];
                 while (c.charAt(0) === " ") { c = c.substring(1, c.length); }
                 if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length, c.length); }
             }
@@ -1036,7 +1051,8 @@ define(function () {
         subscribe: function (topic, fn) {
             var _this = this,
                 id = ++this.topic_id,
-                i=0, z;
+                max,
+                i;
             
             // Create new topic
             if (!_this.topics[topic]) {
@@ -1044,8 +1060,8 @@ define(function () {
             }
             
             // Prevent re-subscribe issues (common on route-reload)
-            for (i, z=_this.topics[topic].length; i<z; i++) {
-                if (_this.topics[topic][i].fn.toString()===fn.toString()){
+            for (i = 0, max = _this.topics[topic].length; i < max; i++) {
+                if (_this.topics[topic][i].fn.toString() === fn.toString()) {
                     return _this.topics[topic][i].id;
                 }
             }
@@ -1054,6 +1070,7 @@ define(function () {
                 id: id,
                 fn: fn
             });
+
             return id;
         },
 
@@ -1066,10 +1083,12 @@ define(function () {
          */
         unsubscribe: function (token) {
             var _this = this,
-                topic;
+                topic,
+                i,
+                max;
             for (topic in _this.topics) {
                 if (_this.topics.hasOwnProperty(topic)) {
-                    for (var i = 0, max = _this.topics[topic].length; i < max; i++) {
+                    for (i = 0, max = _this.topics[topic].length; i < max; i++) {
                         if (_this.topics[topic][i].id === token) {
                             _this.topics[topic].splice(i, 1);
                             return token;
