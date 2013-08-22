@@ -19,7 +19,7 @@ define(function(){
         /**
          * Loads up this modules main view
          */
-        renderModels: function(url_data){
+        renderModels: function () {
             
             // Render template
             Colt.render(this);
@@ -27,20 +27,20 @@ define(function(){
         },
         
         changeModel: function () {
-            
-            var idVal = this.el.querySelectorAll('[name="id"]')[0].value,
-                fooVal = this.el.querySelectorAll('[name="foo"]')[0].value;
+            this.forEachEl(function (i, el) {
+                var idVal = el.querySelectorAll('[name="id"]')[0].value,
+                    fooVal = el.querySelectorAll('[name="foo"]')[0].value;
+                if (!idVal.length || !fooVal.length) {
+                    alert('Please enter values for the model');
+                } else {
                 
-            if (!idVal.length || !fooVal.length) {
-                alert('Please enter values for the model');
-            } else { 
-            
-                Colt.model('test_model', { 
-                    id: idVal, 
-                    foo: fooVal
-                });
-            
-            }
+                    Colt.model('test_model', {
+                        id: idVal,
+                        foo: fooVal
+                    });
+                
+                }
+            });
             
         },
         
