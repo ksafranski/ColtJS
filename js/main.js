@@ -1,7 +1,7 @@
 require.config({
     baseUrl: "js/",
     paths: {
-        colt:  "libs/colt.0.7.2"
+        colt:  "libs/colt.min"
     }
 });
 
