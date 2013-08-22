@@ -56,7 +56,7 @@ define(function(){
 });
 </code></pre>
 
-<p>Modules should be given elements on the <code>index.html</code> (or default page) with the `data-view` attribute set to the <code>module_name</code>.</p>
+<p>Modules should be given elements on the <code>index.html</code> (or default page) with the <code>data-view</code> attribute set to the <code>module_name</code>.</p>
 
 <p>Loading up the framework using RequireJS can be done by simply including the RequireJS source in the <code>index.html</code> file:</p>
 
