@@ -29,11 +29,12 @@ define(['colt','mustache'], function (Colt,Mustache) {
     // Define custom render to use Mustache
     Colt.render = function (scope,data) {
         var template = scope.template,
-            rendered = Mustache.render(template,data);
+            rendered = Mustache.render(template,data),
+            elem = document.querySelectorAll('[data-view="'+scope.mid+'"]');
 
         // Render to DOM
-        document.getElementById(scope.mid).innerHTML = rendered;
-        document.getElementById(scope.mid).style.display = "block";
+        elem[0].innerHTML = rendered;
+        elem[0].style.display = "block";
 
         // Build Event Listeners
         this.delegateEvents(scope.events, scope);
@@ -74,7 +75,7 @@ define(['colt','jquery'], function (Colt,$) {
         });
 
         // Render to DOM & Show Element
-        $('#'+scope.mid).fadeIn(300);
+        $('data-view="'+module_name+'"]').fadeIn(300);
 
         // Build Event Listeners
         this.delegateEvents(scope.events, scope);
