@@ -23,6 +23,6 @@
 <h3>Bower Package</h3>
 <p>ColtJS also has a Bower package which can be installed via <code>bower install coltjs</code>.</p>
 
-<h3>Getting Started Video</h3>
+<!--<h3>Getting Started Video</h3>
 
-<iframe width="630" height="354" src="http://www.youtube.com/embed/f789qUYZCJE" frameborder="0" allowfullscreen></iframe>
+<iframe width="630" height="354" src="http://www.youtube.com/embed/f789qUYZCJE" frameborder="0" allowfullscreen></iframe>-->
