@@ -82,7 +82,7 @@ define(['colt','jquery'], function (Colt,$) {
 
     // Define custom unrender to use transition out...
     Colt.unrender = function (module_name) {
-        $('#'+module_name).fadeOut(300);
+        $('data-view="'+module_name+'"]').fadeOut(300);
     };
 
     // Initialize application 
