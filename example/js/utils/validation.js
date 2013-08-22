@@ -26,18 +26,21 @@ define(function () {
         bind: function (module) {
             if (module.validation_config.events.length) {
                 var field,
-                _this = this,
-                    fn;
+                _this = this;
                 for (var name in module.validation_config.rules) {
-                    field = module.el.querySelectorAll('[name=' + name + ']');
-                    // Loop through validation_events
-                    for (var i = 0, max = module.validation_config.events.length; i < max; i++) {
-                        // Bind to event
-                        (function (module, name, event) {
-                            Colt.bindEvent(field[0], event, function () {
-                                _this.check(module, name);
-                            });
-                        })(module, name, module.validation_config.events[i]);
+                    if (module.validation_config.rules.hasOwnProperty(name)) {
+                        for (var index = 0, _max = module.el.length; index < _max; index++) {
+                            field = module.el[index].querySelectorAll('[name=' + name + ']');
+                            // Loop through validation_events
+                            for (var i = 0, max = module.validation_config.events.length; i < max; i++) {
+                                // Bind to event
+                                (function (module, name, event) {
+                                    Colt.bindEvent(field[0], event, function () {
+                                        _this.check(module, name);
+                                    });
+                                })(module, name, module.validation_config.events[i]);
+                            }
+                        }
                     }
                 }
             }
@@ -52,9 +55,11 @@ define(function () {
             var pass_all = true,
                 result;
             for (var name in module.validation_config.rules) {
-                result = this.check(module, name, true);
-                if (!result) {
-                    pass_all = false;
+                if (module.validation_config.rules.hasOwnProperty(name)) {
+                    result = this.check(module, name, true);
+                    if (!result) {
+                        pass_all = false;
+                    }
                 }
             }
             return pass_all;
@@ -68,20 +73,26 @@ define(function () {
 
         check: function (module, name, check_all) {
             var result,
-            pass = true,
+                _this = this,
+                pass = true,
                 errors = [],
-                check_all = check_all || false,
-                field = module.el.querySelectorAll('[name=' + name + ']'),
-                value = field[0].value;
-            for (var rule in module.validation_config.rules[name]) {
-                result = this.test(rule, value, module.validation_config.rules[name][rule], module);
-                if (!result) {
-                    if(module.validation_config.rules[name].hasOwnProperty('required') && value!==''){
-                        pass = false;
+                check_all = check_all || false;
+
+            module.forEachEl(function (index, el) {
+                var field = el.querySelectorAll('[name=' + name + ']'),
+                    value = field[0].value;
+                for (var rule in module.validation_config.rules[name]) {
+                    if (module.validation_config.rules[name].hasOwnProperty(rule)) {
+                        result = _this.test(rule, value, module.validation_config.rules[name][rule], module);
+                        if (!result) {
+                            if(module.validation_config.rules[name].hasOwnProperty('required') && value!==''){
+                                pass = false;
+                            }
+                            errors.push(rule);
+                        }
                     }
-                    errors.push(rule);
                 }
-            }
+            });
 
             if (!check_all) {
                 this.show_errors(module, name, errors);
@@ -102,7 +113,7 @@ define(function () {
             var errors = '',
                 err_id = 'validation_error_' + name,
                 message,
-                field = module.el.querySelectorAll('[name=' + name + ']')[0];
+                field = module.el[0].querySelectorAll('[name=' + name + ']')[0];
 
             if (!rules.length) {
                 if (document.getElementById(err_id)) {
@@ -173,7 +184,7 @@ define(function () {
                     return value.length <= condition;
 
                 case 'matches':
-                    return (module.el.querySelectorAll('[name=' + condition + ']')[0].value === value);
+                    return (module.el[0].querySelectorAll('[name=' + condition + ']')[0].value === value);
 
                 case 'uszip':
                     return /^([0-9]{5}(-[0-9]{4})?)$/.test(value);

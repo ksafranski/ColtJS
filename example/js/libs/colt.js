@@ -29,6 +29,7 @@
  * ColtJS Framework
  */
 define(function () {
+    "use strict";
 
     /**
      * The main Colt object
