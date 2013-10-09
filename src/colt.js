@@ -904,11 +904,19 @@ define(function () {
 
             // Monitor ReadyState
             xhr.request.onreadystatechange = function () {
+                var responseText;
                 if (xhr.request.readyState === 4) {
                     if (xhr.request.status === 200) {
                         if (xhr.success) {
+                            // Check for JSON responseText, return object
+                            try {
+                               responseText = JSON.parse(xhr.request.responseText);
+                            }
+                            catch(e) {
+                               responseText = xhr.request.responseText;
+                            }
                             // Returns responseText and request object
-                            xhr.success(xhr.request.responseText, xhr.request);
+                            xhr.success(responseText, xhr.request);
                         }
                     } else {
                         if (xhr.error) {
