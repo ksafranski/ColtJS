@@ -263,7 +263,7 @@ define(function () {
                         });
                     },
                     error: function () {
-                        throw new Error("Error Loading" + scope.mid + ".tpl");
+                        console.log("Could not load template for "+scope.mid);
                     }
                 });
 
@@ -945,7 +945,8 @@ define(function () {
         store: function (key, value) {
 
             var _this = this,
-                lsSupport = false;
+                lsSupport = false,
+                data;
 
             // Check for native support
             if (localStorage) {
@@ -968,11 +969,23 @@ define(function () {
 
             // No value supplied, return value
             if (typeof value === "undefined") {
+                // Get value
                 if (lsSupport) { // Native support
-                    return localStorage.getItem(key);
-                } else { // Use cookie
-                    return _this.readCookie(key);
+                    data = localStorage.getItem(key);
+                } else { // Use cookie 
+                    data = _this.readCookie(key);
                 }
+                
+                // Try to parse JSON...
+                try {
+                   data = JSON.parse(data);
+                }
+                catch (e) {
+                   data = data;
+                }
+                
+                return data;
+                
             }
 
             // Null specified, remove store
