@@ -1,13 +1,13 @@
 {
   "name": "ColtJS",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "build/colt.min.js",
   "dependencies": {
     "requirejs": "~2"
   },
   "ignore": [
     "**/.*",
-    "src/*",
+    "src",
     "node_modules",
     "components",
     "docs",
